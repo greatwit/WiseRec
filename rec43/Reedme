@@ -1,0 +1,13 @@
+frameworks/av/media/libmediaplayerservice/MediaPlayerService.h
+frameworks/av/media/libmediaplayerservice/MediaRecorderClient.cpp
+frameworks/av/media/libmediaplayerservice/MediaRecorderClient.h
+frameworks/av/media/libmediaplayerservice/StagefrightRecorder.cpp
+frameworks/av/media/libmediaplayerservice/StagefrightRecorder.h
+
+frameworks/av/media/libstagefright/CameraSource.cpp
+frameworks/av/media/libstagefright/MPEG4Writer.cpp
+frameworks/av/include/media/stagefright/CameraSource.h
+frameworks/av/include/media/stagefright/MPEG4Writer.h
+
+frameworks/av/media/libstagefright/include/ESDS.h
+
