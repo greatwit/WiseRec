@@ -11,7 +11,7 @@ LOCAL_SRC_FILES:=               \
 	CameraSource.cpp			\
     MediaRecorderClient.cpp     \
     StagefrightRecorder.cpp     \
-	android_MediaRecorder.cpp   \
+	android_media_MediaRecorder.cpp   \
 
 LOCAL_SHARED_LIBRARIES :=       \
     libandroid_runtime 			\
