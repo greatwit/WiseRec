@@ -56,6 +56,8 @@
 
 #include "ARTPWriter.h"
 
+#include "ComDefine.h"
+
 namespace android {
 
 // To collect the encoder usage for the battery app
@@ -77,12 +79,12 @@ StagefrightRecorder::StagefrightRecorder(const String16 &opPackageName)
       mVideoSource(VIDEO_SOURCE_LIST_END),
       mStarted(false) {
 
-    ALOGV("Constructor");
+    GLOGI("Constructor");
     reset();
 }
 
 StagefrightRecorder::~StagefrightRecorder() {
-    ALOGV("Destructor");
+    GLOGI("Destructor");
     stop();
 
     if (mLooper != NULL) {
@@ -91,7 +93,7 @@ StagefrightRecorder::~StagefrightRecorder() {
 }
 
 status_t StagefrightRecorder::init() {
-    ALOGV("init");
+    GLOGI("init");
 
     mLooper = new ALooper;
     mLooper->setName("recorder_looper");
@@ -104,12 +106,12 @@ status_t StagefrightRecorder::init() {
 // and return a interface reference. The client side will use that
 // while encoding GL Frames
 sp<IGraphicBufferProducer> StagefrightRecorder::querySurfaceMediaSource() const {
-    ALOGV("Get SurfaceMediaSource");
+    GLOGI("Get SurfaceMediaSource");
     return mGraphicBufferProducer;
 }
 
 status_t StagefrightRecorder::setAudioSource(audio_source_t as) {
-    ALOGV("setAudioSource: %d", as);
+    GLOGI("setAudioSource: %d", as);
     if (as < AUDIO_SOURCE_DEFAULT ||
         (as >= AUDIO_SOURCE_CNT && as != AUDIO_SOURCE_FM_TUNER)) {
         ALOGE("Invalid audio source: %d", as);
@@ -126,7 +128,7 @@ status_t StagefrightRecorder::setAudioSource(audio_source_t as) {
 }
 
 status_t StagefrightRecorder::setVideoSource(video_source vs) {
-    ALOGV("setVideoSource: %d", vs);
+    GLOGI("setVideoSource: %d", vs);
     if (vs < VIDEO_SOURCE_DEFAULT ||
         vs >= VIDEO_SOURCE_LIST_END) {
         ALOGE("Invalid video source: %d", vs);
@@ -143,7 +145,7 @@ status_t StagefrightRecorder::setVideoSource(video_source vs) {
 }
 
 status_t StagefrightRecorder::setOutputFormat(output_format of) {
-    ALOGV("setOutputFormat: %d", of);
+    GLOGI("setOutputFormat: %d", of);
     if (of < OUTPUT_FORMAT_DEFAULT ||
         of >= OUTPUT_FORMAT_LIST_END) {
         ALOGE("Invalid output format: %d", of);
@@ -160,7 +162,7 @@ status_t StagefrightRecorder::setOutputFormat(output_format of) {
 }
 
 status_t StagefrightRecorder::setAudioEncoder(audio_encoder ae) {
-    ALOGV("setAudioEncoder: %d", ae);
+    GLOGI("setAudioEncoder: %d", ae);
     if (ae < AUDIO_ENCODER_DEFAULT ||
         ae >= AUDIO_ENCODER_LIST_END) {
         ALOGE("Invalid audio encoder: %d", ae);
@@ -177,7 +179,7 @@ status_t StagefrightRecorder::setAudioEncoder(audio_encoder ae) {
 }
 
 status_t StagefrightRecorder::setVideoEncoder(video_encoder ve) {
-    ALOGV("setVideoEncoder: %d", ve);
+    GLOGI("setVideoEncoder: %d", ve);
     if (ve < VIDEO_ENCODER_DEFAULT ||
         ve >= VIDEO_ENCODER_LIST_END) {
         ALOGE("Invalid video encoder: %d", ve);
@@ -190,7 +192,7 @@ status_t StagefrightRecorder::setVideoEncoder(video_encoder ve) {
 }
 
 status_t StagefrightRecorder::setVideoSize(int width, int height) {
-    ALOGV("setVideoSize: %dx%d", width, height);
+    GLOGI("setVideoSize: %dx%d", width, height);
     if (width <= 0 || height <= 0) {
         ALOGE("Invalid video size: %dx%d", width, height);
         return BAD_VALUE;
@@ -204,7 +206,7 @@ status_t StagefrightRecorder::setVideoSize(int width, int height) {
 }
 
 status_t StagefrightRecorder::setVideoFrameRate(int frames_per_second) {
-    ALOGV("setVideoFrameRate: %d", frames_per_second);
+    GLOGI("setVideoFrameRate: %d", frames_per_second);
     if ((frames_per_second <= 0 && frames_per_second != -1) ||
         frames_per_second > kMaxHighSpeedFps) {
         ALOGE("Invalid video frame rate: %d", frames_per_second);
@@ -219,7 +221,7 @@ status_t StagefrightRecorder::setVideoFrameRate(int frames_per_second) {
 
 status_t StagefrightRecorder::setCamera(const sp<ICamera> &camera,
                                         const sp<ICameraRecordingProxy> &proxy) {
-    ALOGV("setCamera");
+    GLOGI("setCamera");
     if (camera == 0) {
         ALOGE("camera is NULL");
         return BAD_VALUE;
@@ -235,7 +237,7 @@ status_t StagefrightRecorder::setCamera(const sp<ICamera> &camera,
 }
 
 status_t StagefrightRecorder::setPreviewSurface(const sp<IGraphicBufferProducer> &surface) {
-    ALOGV("setPreviewSurface: %p", surface.get());
+    GLOGI("setPreviewSurface: %p", surface.get());
     mPreviewSurface = surface;
 
     return OK;
@@ -249,7 +251,7 @@ status_t StagefrightRecorder::setInputSurface(
 }
 
 status_t StagefrightRecorder::setOutputFile(int fd, int64_t offset, int64_t length) {
-    ALOGV("setOutputFile: %d, %lld, %lld", fd, offset, length);
+    GLOGI("setOutputFile: %d, %lld, %lld", fd, offset, length);
     // These don't make any sense, do they?
     CHECK_EQ(offset, 0ll);
     CHECK_EQ(length, 0ll);
@@ -351,7 +353,7 @@ static void TrimString(String8 *s) {
 }
 
 status_t StagefrightRecorder::setParamAudioSamplingRate(int32_t sampleRate) {
-    ALOGV("setParamAudioSamplingRate: %d", sampleRate);
+    GLOGI("setParamAudioSamplingRate: %d", sampleRate);
     if (sampleRate <= 0) {
         ALOGE("Invalid audio sampling rate: %d", sampleRate);
         return BAD_VALUE;
@@ -363,7 +365,7 @@ status_t StagefrightRecorder::setParamAudioSamplingRate(int32_t sampleRate) {
 }
 
 status_t StagefrightRecorder::setParamAudioNumberOfChannels(int32_t channels) {
-    ALOGV("setParamAudioNumberOfChannels: %d", channels);
+    GLOGI("setParamAudioNumberOfChannels: %d", channels);
     if (channels <= 0 || channels >= 3) {
         ALOGE("Invalid number of audio channels: %d", channels);
         return BAD_VALUE;
@@ -375,7 +377,7 @@ status_t StagefrightRecorder::setParamAudioNumberOfChannels(int32_t channels) {
 }
 
 status_t StagefrightRecorder::setParamAudioEncodingBitRate(int32_t bitRate) {
-    ALOGV("setParamAudioEncodingBitRate: %d", bitRate);
+    GLOGI("setParamAudioEncodingBitRate: %d", bitRate);
     if (bitRate <= 0) {
         ALOGE("Invalid audio encoding bit rate: %d", bitRate);
         return BAD_VALUE;
@@ -390,7 +392,7 @@ status_t StagefrightRecorder::setParamAudioEncodingBitRate(int32_t bitRate) {
 }
 
 status_t StagefrightRecorder::setParamVideoEncodingBitRate(int32_t bitRate) {
-    ALOGV("setParamVideoEncodingBitRate: %d", bitRate);
+    GLOGI("setParamVideoEncodingBitRate: %d", bitRate);
     if (bitRate <= 0) {
         ALOGE("Invalid video encoding bit rate: %d", bitRate);
         return BAD_VALUE;
@@ -406,7 +408,7 @@ status_t StagefrightRecorder::setParamVideoEncodingBitRate(int32_t bitRate) {
 
 // Always rotate clockwise, and only support 0, 90, 180 and 270 for now.
 status_t StagefrightRecorder::setParamVideoRotation(int32_t degrees) {
-    ALOGV("setParamVideoRotation: %d", degrees);
+    GLOGI("setParamVideoRotation: %d", degrees);
     if (degrees < 0 || degrees % 90 != 0) {
         ALOGE("Unsupported video rotation angle: %d", degrees);
         return BAD_VALUE;
@@ -416,7 +418,7 @@ status_t StagefrightRecorder::setParamVideoRotation(int32_t degrees) {
 }
 
 status_t StagefrightRecorder::setParamMaxFileDurationUs(int64_t timeUs) {
-    ALOGV("setParamMaxFileDurationUs: %lld us", timeUs);
+    GLOGI("setParamMaxFileDurationUs: %lld us", timeUs);
 
     // This is meant for backward compatibility for MediaRecorder.java
     if (timeUs <= 0) {
@@ -435,7 +437,7 @@ status_t StagefrightRecorder::setParamMaxFileDurationUs(int64_t timeUs) {
 }
 
 status_t StagefrightRecorder::setParamMaxFileSizeBytes(int64_t bytes) {
-    ALOGV("setParamMaxFileSizeBytes: %lld bytes", bytes);
+    GLOGI("setParamMaxFileSizeBytes: %lld bytes", bytes);
 
     // This is meant for backward compatibility for MediaRecorder.java
     if (bytes <= 0) {
@@ -456,7 +458,7 @@ status_t StagefrightRecorder::setParamMaxFileSizeBytes(int64_t bytes) {
 }
 
 status_t StagefrightRecorder::setParamInterleaveDuration(int32_t durationUs) {
-    ALOGV("setParamInterleaveDuration: %d", durationUs);
+    GLOGI("setParamInterleaveDuration: %d", durationUs);
     if (durationUs <= 500000) {           //  500 ms
         // If interleave duration is too small, it is very inefficient to do
         // interleaving since the metadata overhead will count for a significant
@@ -478,20 +480,20 @@ status_t StagefrightRecorder::setParamInterleaveDuration(int32_t durationUs) {
 // If seconds == 0, all frames are encoded as I frames. No P frames
 // If seconds >  0, it is the time spacing (seconds) between 2 neighboring I frames
 status_t StagefrightRecorder::setParamVideoIFramesInterval(int32_t seconds) {
-    ALOGV("setParamVideoIFramesInterval: %d seconds", seconds);
+    GLOGI("setParamVideoIFramesInterval: %d seconds", seconds);
     mIFramesIntervalSec = seconds;
     return OK;
 }
 
 status_t StagefrightRecorder::setParam64BitFileOffset(bool use64Bit) {
-    ALOGV("setParam64BitFileOffset: %s",
+    GLOGI("setParam64BitFileOffset: %s",
         use64Bit? "use 64 bit file offset": "use 32 bit file offset");
     mUse64BitFileOffset = use64Bit;
     return OK;
 }
 
 status_t StagefrightRecorder::setParamVideoCameraId(int32_t cameraId) {
-    ALOGV("setParamVideoCameraId: %d", cameraId);
+    GLOGI("setParamVideoCameraId: %d", cameraId);
     if (cameraId < 0) {
         return BAD_VALUE;
     }
@@ -500,7 +502,7 @@ status_t StagefrightRecorder::setParamVideoCameraId(int32_t cameraId) {
 }
 
 status_t StagefrightRecorder::setParamTrackTimeStatus(int64_t timeDurationUs) {
-    ALOGV("setParamTrackTimeStatus: %lld", timeDurationUs);
+    GLOGI("setParamTrackTimeStatus: %lld", timeDurationUs);
     if (timeDurationUs < 20000) {  // Infeasible if shorter than 20 ms?
         ALOGE("Tracking time duration too short: %lld us", timeDurationUs);
         return BAD_VALUE;
@@ -510,7 +512,7 @@ status_t StagefrightRecorder::setParamTrackTimeStatus(int64_t timeDurationUs) {
 }
 
 status_t StagefrightRecorder::setParamVideoEncoderProfile(int32_t profile) {
-    ALOGV("setParamVideoEncoderProfile: %d", profile);
+    GLOGI("setParamVideoEncoderProfile: %d", profile);
 
     // Additional check will be done later when we load the encoder.
     // For now, we are accepting values defined in OpenMAX IL.
@@ -519,7 +521,7 @@ status_t StagefrightRecorder::setParamVideoEncoderProfile(int32_t profile) {
 }
 
 status_t StagefrightRecorder::setParamVideoEncoderLevel(int32_t level) {
-    ALOGV("setParamVideoEncoderLevel: %d", level);
+    GLOGI("setParamVideoEncoderLevel: %d", level);
 
     // Additional check will be done later when we load the encoder.
     // For now, we are accepting values defined in OpenMAX IL.
@@ -528,7 +530,7 @@ status_t StagefrightRecorder::setParamVideoEncoderLevel(int32_t level) {
 }
 
 status_t StagefrightRecorder::setParamMovieTimeScale(int32_t timeScale) {
-    ALOGV("setParamMovieTimeScale: %d", timeScale);
+    GLOGI("setParamMovieTimeScale: %d", timeScale);
 
     // The range is set to be the same as the audio's time scale range
     // since audio's time scale has a wider range.
@@ -541,7 +543,7 @@ status_t StagefrightRecorder::setParamMovieTimeScale(int32_t timeScale) {
 }
 
 status_t StagefrightRecorder::setParamVideoTimeScale(int32_t timeScale) {
-    ALOGV("setParamVideoTimeScale: %d", timeScale);
+    GLOGI("setParamVideoTimeScale: %d", timeScale);
 
     // 60000 is chosen to make sure that each video frame from a 60-fps
     // video has 1000 ticks.
@@ -554,7 +556,7 @@ status_t StagefrightRecorder::setParamVideoTimeScale(int32_t timeScale) {
 }
 
 status_t StagefrightRecorder::setParamAudioTimeScale(int32_t timeScale) {
-    ALOGV("setParamAudioTimeScale: %d", timeScale);
+    GLOGI("setParamAudioTimeScale: %d", timeScale);
 
     // 96000 Hz is the highest sampling rate support in AAC.
     if (timeScale < 600 || timeScale > 96000) {
@@ -566,7 +568,7 @@ status_t StagefrightRecorder::setParamAudioTimeScale(int32_t timeScale) {
 }
 
 status_t StagefrightRecorder::setParamCaptureFpsEnable(int32_t captureFpsEnable) {
-    ALOGV("setParamCaptureFpsEnable: %d", captureFpsEnable);
+    GLOGI("setParamCaptureFpsEnable: %d", captureFpsEnable);
 
     if(captureFpsEnable == 0) {
         mCaptureFpsEnable = false;
@@ -579,7 +581,7 @@ status_t StagefrightRecorder::setParamCaptureFpsEnable(int32_t captureFpsEnable)
 }
 
 status_t StagefrightRecorder::setParamCaptureFps(float fps) {
-    ALOGV("setParamCaptureFps: %.2f", fps);
+    GLOGI("setParamCaptureFps: %.2f", fps);
 
     int64_t timeUs = (int64_t) (1000000.0 / fps + 0.5f);
 
@@ -616,7 +618,7 @@ status_t StagefrightRecorder::setParamGeoDataLatitude(
 
 status_t StagefrightRecorder::setParameter(
         const String8 &key, const String8 &value) {
-    ALOGV("setParameter: key (%s) => value (%s)", key.string(), value.string());
+    GLOGI("setParameter: key (%s) => value (%s)", key.string(), value.string());
     if (key == "max-duration") {
         int64_t max_duration_ms;
         if (safe_strtoi64(value.string(), &max_duration_ms)) {
@@ -729,7 +731,7 @@ status_t StagefrightRecorder::setParameter(
 }
 
 status_t StagefrightRecorder::setParameters(const String8 &params) {
-    ALOGV("setParameters: %s", params.string());
+    GLOGI("setParameters: %s", params.string());
     const char *cparams = params.string();
     const char *key_start = cparams;
     for (;;) {
@@ -776,7 +778,7 @@ status_t StagefrightRecorder::setClientName(const String16& clientName) {
 }
 
 status_t StagefrightRecorder::prepareInternal() {
-    ALOGV("prepare");
+    GLOGI("prepare");
     if (mOutputFd < 0) {
         ALOGE("Output file descriptor is invalid");
         return INVALID_OPERATION;
@@ -830,7 +832,7 @@ status_t StagefrightRecorder::prepare() {
 }
 
 status_t StagefrightRecorder::start() {
-    ALOGV("start");
+    GLOGI("start");
     if (mOutputFd < 0) {
         ALOGE("Output file descriptor is invalid");
         return INVALID_OPERATION;
@@ -1156,7 +1158,7 @@ status_t StagefrightRecorder::setupMPEG2TSRecording() {
 }
 
 void StagefrightRecorder::clipVideoFrameRate() {
-    ALOGV("clipVideoFrameRate: encoder %d", mVideoEncoder);
+    GLOGI("clipVideoFrameRate: encoder %d", mVideoEncoder);
     if (mFrameRate == -1) {
         mFrameRate = mEncoderProfiles->getCamcorderProfileParamByName(
                 "vid.fps", mCameraId, CAMCORDER_QUALITY_LOW);
@@ -1179,7 +1181,7 @@ void StagefrightRecorder::clipVideoFrameRate() {
 }
 
 void StagefrightRecorder::clipVideoBitRate() {
-    ALOGV("clipVideoBitRate: encoder %d", mVideoEncoder);
+    GLOGI("clipVideoBitRate: encoder %d", mVideoEncoder);
     int minBitRate = mEncoderProfiles->getVideoEncoderParamByName(
                         "enc.vid.bps.min", mVideoEncoder);
     int maxBitRate = mEncoderProfiles->getVideoEncoderParamByName(
@@ -1196,7 +1198,7 @@ void StagefrightRecorder::clipVideoBitRate() {
 }
 
 void StagefrightRecorder::clipVideoFrameWidth() {
-    ALOGV("clipVideoFrameWidth: encoder %d", mVideoEncoder);
+    GLOGI("clipVideoFrameWidth: encoder %d", mVideoEncoder);
     int minFrameWidth = mEncoderProfiles->getVideoEncoderParamByName(
                         "enc.vid.width.min", mVideoEncoder);
     int maxFrameWidth = mEncoderProfiles->getVideoEncoderParamByName(
@@ -1240,7 +1242,7 @@ status_t StagefrightRecorder::checkVideoEncoderCapabilities() {
 // Set to use AVC baseline profile if the encoding parameters matches
 // CAMCORDER_QUALITY_LOW profile; this is for the sake of MMS service.
 void StagefrightRecorder::setDefaultProfileIfNecessary() {
-    ALOGV("setDefaultProfileIfNecessary");
+    GLOGI("setDefaultProfileIfNecessary");
 
     camcorder_quality quality = CAMCORDER_QUALITY_LOW;
 
@@ -1328,7 +1330,7 @@ status_t StagefrightRecorder::checkAudioEncoderCapabilities() {
 }
 
 void StagefrightRecorder::clipAudioBitRate() {
-    ALOGV("clipAudioBitRate: encoder %d", mAudioEncoder);
+    GLOGI("clipAudioBitRate: encoder %d", mAudioEncoder);
 
     int minAudioBitRate =
             mEncoderProfiles->getAudioEncoderParamByName(
@@ -1350,7 +1352,7 @@ void StagefrightRecorder::clipAudioBitRate() {
 }
 
 void StagefrightRecorder::clipAudioSampleRate() {
-    ALOGV("clipAudioSampleRate: encoder %d", mAudioEncoder);
+    GLOGI("clipAudioSampleRate: encoder %d", mAudioEncoder);
 
     int minSampleRate =
             mEncoderProfiles->getAudioEncoderParamByName(
@@ -1372,7 +1374,7 @@ void StagefrightRecorder::clipAudioSampleRate() {
 }
 
 void StagefrightRecorder::clipNumberOfAudioChannels() {
-    ALOGV("clipNumberOfAudioChannels: encoder %d", mAudioEncoder);
+    GLOGI("clipNumberOfAudioChannels: encoder %d", mAudioEncoder);
 
     int minChannels =
             mEncoderProfiles->getAudioEncoderParamByName(
@@ -1394,7 +1396,7 @@ void StagefrightRecorder::clipNumberOfAudioChannels() {
 }
 
 void StagefrightRecorder::clipVideoFrameHeight() {
-    ALOGV("clipVideoFrameHeight: encoder %d", mVideoEncoder);
+    GLOGI("clipVideoFrameHeight: encoder %d", mVideoEncoder);
     int minFrameHeight = mEncoderProfiles->getVideoEncoderParamByName(
                         "enc.vid.height.min", mVideoEncoder);
     int maxFrameHeight = mEncoderProfiles->getVideoEncoderParamByName(
@@ -1725,7 +1727,7 @@ void StagefrightRecorder::setupMPEG4orWEBMMetaData(sp<MetaData> *meta) {
 }
 
 status_t StagefrightRecorder::pause() {
-    ALOGV("pause");
+    GLOGI("pause");
     if (mWriter == NULL) {
         return UNKNOWN_ERROR;
     }
@@ -1750,7 +1752,7 @@ status_t StagefrightRecorder::pause() {
 }
 
 status_t StagefrightRecorder::stop() {
-    ALOGV("stop");
+    GLOGI("stop");
     status_t err = OK;
 
     if (mCaptureFpsEnable && mCameraSourceTimeLapse != NULL) {
@@ -1789,14 +1791,14 @@ status_t StagefrightRecorder::stop() {
 }
 
 status_t StagefrightRecorder::close() {
-    ALOGV("close");
+    GLOGI("close");
     stop();
 
     return OK;
 }
 
 status_t StagefrightRecorder::reset() {
-    ALOGV("reset");
+    GLOGI("reset");
     stop();
 
     // No audio or video source by default
@@ -1845,7 +1847,7 @@ status_t StagefrightRecorder::reset() {
 }
 
 status_t StagefrightRecorder::getMaxAmplitude(int *max) {
-    ALOGV("getMaxAmplitude");
+    GLOGI("getMaxAmplitude");
 
     if (max == NULL) {
         ALOGE("Null pointer argument");
@@ -1863,7 +1865,7 @@ status_t StagefrightRecorder::getMaxAmplitude(int *max) {
 
 status_t StagefrightRecorder::dump(
         int fd, const Vector<String16>& args) const {
-    ALOGV("dump");
+    GLOGI("dump");
     const size_t SIZE = 256;
     char buffer[SIZE];
     String8 result;

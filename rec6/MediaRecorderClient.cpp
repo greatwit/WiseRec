@@ -35,10 +35,11 @@
 #include <system/audio.h>
 
 #include "MediaRecorderClient.h"
-#include "MediaPlayerService.h"
 
 #include "StagefrightRecorder.h"
 #include <gui/IGraphicBufferProducer.h>
+
+#include "ComDefine.h"
 
 namespace android {
 
@@ -57,7 +58,7 @@ static bool checkPermission(const char* permissionString) {
 
 status_t MediaRecorderClient::setInputSurface(const sp<IGraphicBufferConsumer>& surface)
 {
-    ALOGV("setInputSurface");
+    GLOGW("setInputSurface");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -68,7 +69,7 @@ status_t MediaRecorderClient::setInputSurface(const sp<IGraphicBufferConsumer>& 
 
 sp<IGraphicBufferProducer> MediaRecorderClient::querySurfaceMediaSource()
 {
-    ALOGV("Query SurfaceMediaSource");
+    GLOGW("Query SurfaceMediaSource");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -82,7 +83,7 @@ sp<IGraphicBufferProducer> MediaRecorderClient::querySurfaceMediaSource()
 status_t MediaRecorderClient::setCamera(const sp<ICamera>& camera,
                                         const sp<ICameraRecordingProxy>& proxy)
 {
-    ALOGV("setCamera");
+    GLOGW("setCamera");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -93,7 +94,7 @@ status_t MediaRecorderClient::setCamera(const sp<ICamera>& camera,
 
 status_t MediaRecorderClient::setPreviewSurface(const sp<IGraphicBufferProducer>& surface)
 {
-    ALOGV("setPreviewSurface");
+    GLOGW("setPreviewSurface");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -104,7 +105,7 @@ status_t MediaRecorderClient::setPreviewSurface(const sp<IGraphicBufferProducer>
 
 status_t MediaRecorderClient::setVideoSource(int vs)
 {
-    ALOGV("setVideoSource(%d)", vs);
+    GLOGW("setVideoSource(%d)", vs);
     // Check camera permission for sources other than SURFACE
     if (vs != VIDEO_SOURCE_SURFACE && !checkPermission(cameraPermission)) {
         return PERMISSION_DENIED;
@@ -119,7 +120,7 @@ status_t MediaRecorderClient::setVideoSource(int vs)
 
 status_t MediaRecorderClient::setAudioSource(int as)
 {
-    ALOGV("setAudioSource(%d)", as);
+    GLOGW("setAudioSource(%d)", as);
     if (!checkPermission(recordAudioPermission)) {
         return PERMISSION_DENIED;
     }
@@ -133,7 +134,7 @@ status_t MediaRecorderClient::setAudioSource(int as)
 
 status_t MediaRecorderClient::setOutputFormat(int of)
 {
-    ALOGV("setOutputFormat(%d)", of);
+    GLOGW("setOutputFormat(%d)", of);
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -144,7 +145,7 @@ status_t MediaRecorderClient::setOutputFormat(int of)
 
 status_t MediaRecorderClient::setVideoEncoder(int ve)
 {
-    ALOGV("setVideoEncoder(%d)", ve);
+    GLOGW("setVideoEncoder(%d)", ve);
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -155,7 +156,7 @@ status_t MediaRecorderClient::setVideoEncoder(int ve)
 
 status_t MediaRecorderClient::setAudioEncoder(int ae)
 {
-    ALOGV("setAudioEncoder(%d)", ae);
+    GLOGW("setAudioEncoder(%d)", ae);
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -166,7 +167,7 @@ status_t MediaRecorderClient::setAudioEncoder(int ae)
 
 status_t MediaRecorderClient::setOutputFile(int fd, int64_t offset, int64_t length)
 {
-    ALOGV("setOutputFile(%d, %lld, %lld)", fd, offset, length);
+    GLOGW("setOutputFile(%d, %lld, %lld)", fd, offset, length);
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -177,7 +178,7 @@ status_t MediaRecorderClient::setOutputFile(int fd, int64_t offset, int64_t leng
 
 status_t MediaRecorderClient::setVideoSize(int width, int height)
 {
-    ALOGV("setVideoSize(%dx%d)", width, height);
+    GLOGW("setVideoSize(%dx%d)", width, height);
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -188,7 +189,7 @@ status_t MediaRecorderClient::setVideoSize(int width, int height)
 
 status_t MediaRecorderClient::setVideoFrameRate(int frames_per_second)
 {
-    ALOGV("setVideoFrameRate(%d)", frames_per_second);
+    GLOGW("setVideoFrameRate(%d)", frames_per_second);
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -198,7 +199,7 @@ status_t MediaRecorderClient::setVideoFrameRate(int frames_per_second)
 }
 
 status_t MediaRecorderClient::setParameters(const String8& params) {
-    ALOGV("setParameters(%s)", params.string());
+    GLOGW("setParameters(%s)", params.string());
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -209,7 +210,7 @@ status_t MediaRecorderClient::setParameters(const String8& params) {
 
 status_t MediaRecorderClient::prepare()
 {
-    ALOGV("prepare");
+    GLOGW("prepare");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -221,7 +222,7 @@ status_t MediaRecorderClient::prepare()
 
 status_t MediaRecorderClient::getMaxAmplitude(int* max)
 {
-    ALOGV("getMaxAmplitude");
+    GLOGW("getMaxAmplitude");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -232,7 +233,7 @@ status_t MediaRecorderClient::getMaxAmplitude(int* max)
 
 status_t MediaRecorderClient::start()
 {
-    ALOGV("start");
+    GLOGW("start");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -244,7 +245,7 @@ status_t MediaRecorderClient::start()
 
 status_t MediaRecorderClient::stop()
 {
-    ALOGV("stop");
+    GLOGW("stop");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -255,7 +256,7 @@ status_t MediaRecorderClient::stop()
 
 status_t MediaRecorderClient::init()
 {
-    ALOGV("init");
+    GLOGW("init");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -266,7 +267,7 @@ status_t MediaRecorderClient::init()
 
 status_t MediaRecorderClient::close()
 {
-    ALOGV("close");
+    GLOGW("close");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -278,7 +279,7 @@ status_t MediaRecorderClient::close()
 
 status_t MediaRecorderClient::reset()
 {
-    ALOGV("reset");
+    GLOGW("reset");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -289,35 +290,31 @@ status_t MediaRecorderClient::reset()
 
 status_t MediaRecorderClient::release()
 {
-    ALOGV("release");
+    GLOGW("release");
     Mutex::Autolock lock(mLock);
     if (mRecorder != NULL) {
         delete mRecorder;
         mRecorder = NULL;
-        wp<MediaRecorderClient> client(this);
-        mMediaPlayerService->removeMediaRecorderClient(client);
     }
     return NO_ERROR;
 }
 
-MediaRecorderClient::MediaRecorderClient(const sp<MediaPlayerService>& service, pid_t pid,
-        const String16& opPackageName)
+MediaRecorderClient::MediaRecorderClient(const String16& opPackageName)
 {
-    ALOGV("Client constructor");
-    mPid = pid;
+    GLOGW("Client constructor");
+
     mRecorder = new StagefrightRecorder(opPackageName);
-    mMediaPlayerService = service;
 }
 
 MediaRecorderClient::~MediaRecorderClient()
 {
-    ALOGV("Client destructor");
+    GLOGW("Client destructor");
     release();
 }
 
 status_t MediaRecorderClient::setListener(const sp<IMediaRecorderClient>& listener)
 {
-    ALOGV("setListener");
+    GLOGW("setListener");
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");
@@ -327,7 +324,7 @@ status_t MediaRecorderClient::setListener(const sp<IMediaRecorderClient>& listen
 }
 
 status_t MediaRecorderClient::setClientName(const String16& clientName) {
-    ALOGV("setClientName(%s)", String8(clientName).string());
+    GLOGW("setClientName(%s)", String8(clientName).string());
     Mutex::Autolock lock(mLock);
     if (mRecorder == NULL) {
         ALOGE("recorder is not initialized");

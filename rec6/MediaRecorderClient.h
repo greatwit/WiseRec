@@ -23,11 +23,10 @@
 namespace android {
 
 class MediaRecorderBase;
-class MediaPlayerService;
 class ICameraRecordingProxy;
 class IGraphicBufferProducer;
 
-class MediaRecorderClient : public BnMediaRecorder
+class MediaRecorderClient
 {
 public:
     virtual     status_t   setCamera(const sp<ICamera>& camera,
@@ -58,19 +57,14 @@ public:
     virtual     status_t   setInputSurface(const sp<IGraphicBufferConsumer>& surface);
     virtual     sp<IGraphicBufferProducer> querySurfaceMediaSource();
 
-private:
-    friend class           MediaPlayerService;  // for accessing private constructor
+    //friend class           MediaPlayerService;  // for accessing private constructor
 
-                           MediaRecorderClient(
-                                   const sp<MediaPlayerService>& service,
-                                                               pid_t pid,
-                                                               const String16& opPackageName);
+                           MediaRecorderClient(const String16& opPackageName);
     virtual                ~MediaRecorderClient();
 
-    pid_t                  mPid;
+private:
     Mutex                  mLock;
     MediaRecorderBase      *mRecorder;
-    sp<MediaPlayerService> mMediaPlayerService;
 };
 
 }; // namespace android
