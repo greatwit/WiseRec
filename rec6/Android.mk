@@ -40,7 +40,7 @@ LOCAL_C_INCLUDES :=                                                 \
     $(TOP)/frameworks/native/include/media/openmax                  \
     $(TOP)/external/tremolo/Tremolo                                 \
 
-LOCAL_MODULE:= libwise_rec
+LOCAL_MODULE:= libwise_rec6
 
 include $(BUILD_SHARED_LIBRARY)
 

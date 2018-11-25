@@ -27,7 +27,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <utils/threads.h>
-
+#include <media/stagefright/PersistentSurface.h>
 #include <ScopedUtfChars.h>
 
 #include "jni.h"
@@ -65,6 +65,7 @@ public:
 
 // helper function to extract a native Camera object from a Camera Java object
 extern sp<Camera> get_native_camera(JNIEnv *env, jobject thiz, struct JNICameraContext** context);
+//extern sp<PersistentSurface> android_media_MediaCodec_getPersistentInputSurface(JNIEnv* env, jobject object);
 
 struct fields_t {
     jfieldID    context;
@@ -138,6 +139,13 @@ static sp<Surface> get_surface(JNIEnv* env, jobject clazz)
     return android_view_Surface_getSurface(env, clazz);
 }
 
+static sp<PersistentSurface> get_persistentSurface(JNIEnv* env, jobject object)
+{
+	GLOGW("get_persistentSurface");
+    //return android_media_MediaCodec_getPersistentInputSurface(env, object);
+	return NULL;
+}
+
 // Returns true if it throws an exception.
 static bool process_media_recorder_call(JNIEnv *env, status_t opStatus, const char* exception, const char* message)
 {
@@ -173,6 +181,7 @@ static void android_media_MediaRecorder_setCamera(JNIEnv* env, jobject thiz, job
 {
     // we should not pass a null camera to get_native_camera() call.
     if (camera == NULL) {
+    	GLOGE("camera object is a NULL pointer.");
         jniThrowNullPointerException(env, "camera object is a NULL pointer");
         return;
     }
@@ -187,6 +196,7 @@ android_media_MediaRecorder_setVideoSource(JNIEnv *env, jobject thiz, jint vs)
 {
     GLOGW("setVideoSource(%d)", vs);
     if (vs < VIDEO_SOURCE_DEFAULT || vs >= VIDEO_SOURCE_LIST_END) {
+    	GLOGE("Invalid video source.");
         jniThrowException(env, "java/lang/IllegalArgumentException", "Invalid video source");
         return;
     }
@@ -409,12 +419,12 @@ android_media_MediaRecorder_native_init(JNIEnv *env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("com/wise/mediarec/Recorder/WiseRecorder");
+    clazz = env->FindClass("com/wise/mediarec/Recorder/WiseRecorder6");
     if (clazz == NULL) {
         return;
     }
 
-    fields.context = env->GetFieldID(clazz, "mNativeContext", "I");
+    fields.context = env->GetFieldID(clazz, "mNativeContext", "J");
     if (fields.context == NULL) {
         return;
     }
@@ -483,8 +493,8 @@ static jobject
 android_media_MediaRecorder_getSurface(JNIEnv *env, jobject thiz)
 {
 	GLOGW("getSurface");
-//    sp<MediaRecorder> mr = getMediaRecorder(env, thiz);
-//
+
+//    MediaRecorderClient* mr = getMediaRecorder(env, thiz);
 //    sp<IGraphicBufferProducer> bufferProducer = mr->querySurfaceMediaSourceFromMediaServer();
 //    if (bufferProducer == NULL) {
 //        jniThrowException(
@@ -504,12 +514,12 @@ void android_media_MediaRecorder_setInputSurface(
         JNIEnv* env, jobject thiz, jobject object) {
 	GLOGW("android_media_MediaRecorder_setInputSurface");
 
-//    sp<MediaRecorder> mr = getMediaRecorder(env, thiz);
-//
-//    sp<PersistentSurface> persistentSurface = get_persistentSurface(env, object);
-//
-//    process_media_recorder_call(env, mr->setInputSurface(persistentSurface),
-//            "java/lang/IllegalArgumentException", "native_setInputSurface failed.");
+	MediaRecorderClient* mr = getMediaRecorder(env, thiz);
+
+    sp<PersistentSurface> persistentSurface = get_persistentSurface(env, object);
+
+    //process_media_recorder_call(env, mr->setInputSurface(persistentSurface),
+    //        "java/lang/IllegalArgumentException", "native_setInputSurface failed.");
 }
 
 // ----------------------------------------------------------------------------
@@ -579,7 +589,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		return result;           
 	}
 	//com.wise.mediarec.Recorder
-	if( myRegisterNativeMethods(env, "com/wise/mediarec/Recorder/WiseRecorder", gMethods, sizeof(gMethods) / sizeof(gMethods[0])) != JNI_OK) 
+	if( myRegisterNativeMethods(env, "com/wise/mediarec/Recorder/WiseRecorder6", gMethods, sizeof(gMethods) / sizeof(gMethods[0])) != JNI_OK) 
 	{
 		GLOGE("can't load ffmpeg");
 	}
