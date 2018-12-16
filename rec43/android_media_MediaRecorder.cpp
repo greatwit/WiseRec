@@ -43,6 +43,7 @@
 #include "ComDefine.h"
 #define TAG "myMediaRecorder"
 
+#define CLASS_PATH	"com/wise/mediarec/Recorder/WiseRecorder"
 
 using namespace android;
 
@@ -407,7 +408,7 @@ android_media_MediaRecorder_native_init(JNIEnv *env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("com/wise/mediarec/Recorder/WiseRecorder");
+    clazz = env->FindClass(CLASS_PATH);
     if (clazz == NULL) {
         return;
     }
@@ -541,7 +542,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		return result;           
 	}
 	//com.wise.mediarec.Recorder
-	if( myRegisterNativeMethods(env, "com/wise/mediarec/Recorder/WiseRecorder", gMethods, sizeof(gMethods) / sizeof(gMethods[0])) != JNI_OK) 
+	if( myRegisterNativeMethods(env, CLASS_PATH, gMethods, sizeof(gMethods) / sizeof(gMethods[0])) != JNI_OK)
 	{
 		GLOGE("can't load ffmpeg");
 	}

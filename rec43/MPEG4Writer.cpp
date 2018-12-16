@@ -24,7 +24,8 @@
 #include <sys/prctl.h>
 
 #include <media/stagefright/foundation/ADebug.h>
-#include <media/stagefright/MPEG4Writer.h>
+//#include <media/stagefright/MPEG4Writer.h>
+#include "MPEG4Writer.h"
 #include <media/stagefright/MediaBuffer.h>
 #include <media/stagefright/MetaData.h>
 #include <media/stagefright/MediaDefs.h>
@@ -2120,6 +2121,8 @@ status_t MPEG4Writer::Track::threadEntry() {
         }
 
         ++count;
+
+        GLOGE("codec range_length():%d", buffer->range_length());
 
         int32_t isCodecConfig;
         if (buffer->meta_data()->findInt32(kKeyIsCodecConfig, &isCodecConfig)

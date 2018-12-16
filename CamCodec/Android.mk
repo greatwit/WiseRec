@@ -7,11 +7,8 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:=               \
-	MPEG4Writer.cpp				\
-	CameraSource.cpp			\
-    MediaRecorderClient.cpp     \
-    StagefrightRecorder.cpp     \
-	android_media_MediaRecorder.cpp   \
+	CameraFrame.cpp		\
+	CamCodecNative.cpp   \
 
 LOCAL_SHARED_LIBRARIES :=       \
     libandroid_runtime 			\
@@ -40,7 +37,7 @@ LOCAL_C_INCLUDES :=                                                 \
     $(TOP)/frameworks/native/include/media/openmax                  \
     $(TOP)/external/tremolo/Tremolo                                 \
 
-LOCAL_MODULE:= libwise_rec43
+LOCAL_MODULE:= libCamCodec
 
 include $(BUILD_SHARED_LIBRARY)
 
