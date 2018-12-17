@@ -9,6 +9,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES:=               \
 	MPEG4Writer.cpp				\
 	CameraSource.cpp			\
+	MediaCodecSource.cpp		\
     MediaRecorderClient.cpp     \
     StagefrightRecorder.cpp     \
 	android_media_MediaRecorder.cpp   \
@@ -38,7 +39,6 @@ LOCAL_C_INCLUDES :=                                                 \
     $(TOP)/frameworks/av/media/libstagefright/rtsp                  \
     $(TOP)/frameworks/av/media/libstagefright/wifi-display          \
     $(TOP)/frameworks/native/include/media/openmax                  \
-    $(TOP)/external/tremolo/Tremolo                                 \
 
 LOCAL_MODULE:= libwise_rec6
 

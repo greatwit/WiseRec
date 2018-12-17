@@ -30,7 +30,8 @@
 
 #include <media/stagefright/foundation/ADebug.h>
 #include <media/stagefright/foundation/AMessage.h>
-#include <media/stagefright/MPEG4Writer.h>
+//#include <media/stagefright/MPEG4Writer.h>
+#include "MPEG4Writer.h"
 #include <media/stagefright/MediaBuffer.h>
 #include <media/stagefright/MetaData.h>
 #include <media/stagefright/MediaDefs.h>

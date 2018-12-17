@@ -35,8 +35,8 @@
 #include <system/audio.h>
 
 #include "MediaRecorderClient.h"
-
 #include "StagefrightRecorder.h"
+
 #include <gui/IGraphicBufferProducer.h>
 
 #include "ComDefine.h"

@@ -232,6 +232,7 @@ void CameraFrame::stopCameraRecording() {
 
 void CameraFrame::dataCallbackTimestamp(int64_t timestampUs, int32_t msgType, const sp<IMemory> &data) {
 	GLOGW("CameraFrame::dataCallbackTimestamp: timestamp %lld us datasize:%d", timestampUs, data->size());
+
 	releaseRecordingFrame(data);
 }
 

@@ -45,6 +45,7 @@
 #include "ComDefine.h"
 #define TAG "myMediaRecorder"
 
+#define CLASS_PATH	"com/wise/mediarec/Recorder/WiseRecorder6"
 
 using namespace android;
 
@@ -104,7 +105,7 @@ JNIMediaRecorderListener::JNIMediaRecorderListener(JNIEnv* env, jobject thiz, jo
     // that posts events to the application thread.
     jclass clazz = env->GetObjectClass(thiz);
     if (clazz == NULL) {
-        ALOGE("Can't find android/media/MediaRecorder");
+        GLOGE("Can't find android/media/MediaRecorder");
         jniThrowException(env, "java/lang/Exception", NULL);
         return;
     }
@@ -259,7 +260,7 @@ android_media_MediaRecorder_setParameter(JNIEnv *env, jobject thiz, jstring para
     GLOGW("setParameter()");
     if (params == NULL)
     {
-        ALOGE("Invalid or empty params string.  This parameter will be ignored.");
+        GLOGE("Invalid or empty params string.  This parameter will be ignored.");
         return;
     }
 
@@ -268,7 +269,7 @@ android_media_MediaRecorder_setParameter(JNIEnv *env, jobject thiz, jstring para
     const char* params8 = env->GetStringUTFChars(params, NULL);
     if (params8 == NULL)
     {
-        ALOGE("Failed to covert jstring to String8.  This parameter will be ignored.");
+        GLOGE("Failed to covert jstring to String8.  This parameter will be ignored.");
         return;
     }
 
@@ -353,7 +354,7 @@ android_media_MediaRecorder_prepare(JNIEnv *env, jobject thiz)
         // The application may misbehave and
         // the preview surface becomes unavailable
         if (native_surface.get() == 0) {
-            ALOGE("Application lost the surface");
+            GLOGE("Application lost the surface");
             jniThrowException(env, "java/io/IOException", "invalid preview surface");
             return;
         }
@@ -419,7 +420,7 @@ android_media_MediaRecorder_native_init(JNIEnv *env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("com/wise/mediarec/Recorder/WiseRecorder6");
+    clazz = env->FindClass(CLASS_PATH);
     if (clazz == NULL) {
         return;
     }
@@ -589,7 +590,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		return result;           
 	}
 	//com.wise.mediarec.Recorder
-	if( myRegisterNativeMethods(env, "com/wise/mediarec/Recorder/WiseRecorder6", gMethods, sizeof(gMethods) / sizeof(gMethods[0])) != JNI_OK) 
+	if( myRegisterNativeMethods(env, CLASS_PATH, gMethods, sizeof(gMethods) / sizeof(gMethods[0])) != JNI_OK)
 	{
 		GLOGE("can't load ffmpeg");
 	}
