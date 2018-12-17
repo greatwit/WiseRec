@@ -15,6 +15,7 @@ namespace android {
 
 static const int64_t CAMERA_SOURCE_TIMEOUT_NS = 3000000000LL;
 
+/////////////////////////////////cold camera listener//////////////////////////////////////////
 struct CameraSourceListener : public CameraListener {
     CameraSourceListener(CameraFrame *pSource);
 
@@ -65,7 +66,8 @@ void CameraSourceListener::postDataTimestamp(
 //        source->dataCallbackTimestamp(timestamp/1000, msgType, dataPtr);
 //    }
 }
-////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////cameraFrame////////////////////////////////////////////
 
 CameraFrame::CameraFrame() {
 
@@ -89,8 +91,7 @@ status_t CameraFrame::CameraSetup(const sp<Camera> &pOriCamera, int32_t cameraId
     } else {
         // We get the proxy from Camera, not ICamera. We need to get the proxy
         // to the remote Camera owned by the application. Here mCamera is a
-        // local Camera object created by us. We cannot use the proxy from
-        // mCamera here.
+        // local Camera object created by us. We cannot use the proxy from mCamera here.
         mCamera = Camera::create(camera);
         if (mCamera == 0) return -EBUSY;
 
@@ -99,26 +100,10 @@ status_t CameraFrame::CameraSetup(const sp<Camera> &pOriCamera, int32_t cameraId
 
         mDeathNotifier = new DeathNotifier();
         // isBinderAlive needs linkToDeath to work.
-        mCameraRecordingProxy->asBinder()->linkToDeath(mDeathNotifier);
+        //mCameraRecordingProxy->asBinder()->linkToDeath(mDeathNotifier);
     }
 
     mCamera->lock();
-
-    CameraParameters params(mCamera->getParameters());
-    const char* colorFormat = params.get( CameraParameters::KEY_VIDEO_FRAME_FORMAT);//yuv420sp
-
-    int32_t previewWidth  = -1, previewHeight  = -1;
-    int32_t videoWidth  = -1, videoHeight  = -1;
-
-	// video size is the same as preview size
-	params.getPreviewSize(&previewWidth, &previewHeight);
-	// video size may not be the same as preview
-	params.getVideoSize(&videoWidth, &videoHeight);
-    GLOGW("color format (%s) previewWidth:%d previewHeight:%d videoWidth:%d, videoHeight:%d",
-    	   colorFormat, previewWidth, previewHeight, videoWidth, videoHeight);
-
-    const char* supportedFrameRates = params.get(CameraParameters::KEY_SUPPORTED_PREVIEW_FRAME_RATES);
-    GLOGE("Supported frame rates: %s", supportedFrameRates);
 
 
     //set true,data size would be 8 byte
@@ -152,7 +137,7 @@ void CameraFrame::releaseCamera() {
         IPCThreadState::self()->restoreCallingIdentity(token);
     }
     if (mCameraRecordingProxy != 0) {
-        mCameraRecordingProxy->asBinder()->unlinkToDeath(mDeathNotifier);
+        //mCameraRecordingProxy->asBinder()->unlinkToDeath(mDeathNotifier);
         mCameraRecordingProxy.clear();
     }
     mCameraFlags = 0;
@@ -163,12 +148,43 @@ status_t CameraFrame::configureCamera(int width, int height,int frameRate) {
 	// and/or frame rate.
 	status_t err;
 	CameraParameters params(mCamera->getParameters());
+
+    const char* colorFormat = params.get( CameraParameters::KEY_VIDEO_FRAME_FORMAT);//yuv420sp
+
+    Vector<Size> sizes;
+    params.getSupportedVideoSizes(sizes);
+    if (sizes.size() > 0) {
+		int32_t previewWidth  = -1, previewHeight  = -1;
+		int32_t videoWidth  = -1, videoHeight  = -1;
+
+		// video size is the same as preview size
+		params.getPreviewSize(&previewWidth, &previewHeight);
+		// video size may not be the same as preview
+		params.getVideoSize(&videoWidth, &videoHeight);
+		GLOGW("color format (%s) previewWidth:%d previewHeight:%d videoWidth:%d, videoHeight:%d",
+			   colorFormat, previewWidth, previewHeight, videoWidth, videoHeight);
+
+		params.setVideoSize(width, height);
+	}
+
+    const char* supportedFrameRates = params.get(CameraParameters::KEY_SUPPORTED_PREVIEW_FRAME_RATES);
+    char buf[4];
+    snprintf(buf, 4, "%d", frameRate);
+    if (strstr(supportedFrameRates, buf) == NULL) {
+        GLOGE("Requested frame rate (%d) is not supported: %s", frameRate, supportedFrameRates);
+    }else
+    {
+    	GLOGE("Supported frame rates: %s", supportedFrameRates);
+    	params.setPreviewFrameRate(frameRate);
+    }
+
     // Either frame rate or frame size needs to be changed.
     String8 s = params.flatten();
     if (OK != mCamera->setParameters(s)) {
         GLOGE("Could not change settings." " Someone else is using camera %p?", mCamera.get());
         return -EBUSY;
     }
+
 	return OK;
 }
 
@@ -220,7 +236,7 @@ void CameraFrame::dataCallbackTimestamp(int64_t timestampUs, int32_t msgType, co
 }
 
 void CameraFrame::releaseRecordingFrame(const sp<IMemory>& frame) {
-    GLOGW("releaseRecordingFrame");
+    //GLOGW("releaseRecordingFrame");
     if (mCameraRecordingProxy != NULL) {
         mCameraRecordingProxy->releaseRecordingFrame(frame);
     } else if (mCamera != NULL) {
@@ -230,7 +246,7 @@ void CameraFrame::releaseRecordingFrame(const sp<IMemory>& frame) {
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////proxyListener for hot camera/////////////////////////////////////////////////////////
 
 CameraFrame::ProxyListener::ProxyListener(CameraFrame* pSource) {
     mSource = pSource;
@@ -244,41 +260,5 @@ void CameraFrame::ProxyListener::dataCallbackTimestamp(
 void CameraFrame::DeathNotifier::binderDied(const wp<IBinder>& who) {
     GLOGI("Camera recording proxy died");
 }
-
-
-//static int32_t getColorFormat(const char* colorFormat) {
-//    if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV420P)) {
-//       return OMX_COLOR_FormatYUV420Planar;
-//    }
-//
-//    if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV422SP)) {
-//       return OMX_COLOR_FormatYUV422SemiPlanar;
-//    }
-//
-//    if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV420SP)) {
-//        return OMX_COLOR_FormatYUV420SemiPlanar;
-//    }
-//
-//    if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV422I)) {
-//        return OMX_COLOR_FormatYCbYCr;
-//    }
-//
-//    if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_RGB565)) {
-//       return OMX_COLOR_Format16bitRGB565;
-//    }
-//
-//    if (!strcmp(colorFormat, "OMX_TI_COLOR_FormatYUV420PackedSemiPlanar")) {
-//       return OMX_TI_COLOR_FormatYUV420PackedSemiPlanar;
-//    }
-//
-//    if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_ANDROID_OPAQUE)) {
-//        return OMX_COLOR_FormatAndroidOpaque;
-//    }
-//
-//    ALOGE("Uknown color format (%s), please add it to "
-//         "CameraSource::getColorFormat", colorFormat);
-//
-//    CHECK(!"Unknown color format");
-//}
 
 }
