@@ -6,7 +6,10 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_CPPFLAGS 	+= -std=c++11
+
 LOCAL_SRC_FILES:=               \
+	mediaextrator_ndk.c \
 	CameraFrame.cpp		\
 	CamCodecNative.cpp   \
 

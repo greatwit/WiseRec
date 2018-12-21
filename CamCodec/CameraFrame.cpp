@@ -1,5 +1,5 @@
 
-
+#include <media/stagefright/foundation/AMessage.h>
 #include <binder/IPCThreadState.h>
 #include <camera/Camera.h>
 #include <camera/ICamera.h>
@@ -8,12 +8,14 @@
 #include "CameraFrame.h"
 #include "ComDefine.h"
 
-
+#include <media/stagefright/MediaCodec.h>
 
 namespace android {
 
 
 static const int64_t CAMERA_SOURCE_TIMEOUT_NS = 3000000000LL;
+
+
 
 /////////////////////////////////cold camera listener//////////////////////////////////////////
 struct CameraSourceListener : public CameraListener {
@@ -70,11 +72,18 @@ void CameraSourceListener::postDataTimestamp(
 ////////////////////////////////////////////cameraFrame////////////////////////////////////////////
 
 CameraFrame::CameraFrame() {
+	InitExtratorSymbols(&mSymbols);
+	mCodec    = mSymbols.AMediaCodec.createEncoderByType("video/avc");
+
+	GLOGE("AMediaCodec.createEncoderByType result:%s", (mCodec!=NULL)?"true":"false");
 
 }
 
 CameraFrame::~CameraFrame() {
-
+	if(mCodec) {
+		mSymbols.AMediaCodec.stop(mCodec);
+		mSymbols.AMediaCodec.deletemc(mCodec);
+	}
 }
 
 status_t CameraFrame::CameraSetup(const sp<Camera> &pOriCamera, int32_t cameraId, const char* clientName, uid_t clientUid) {
@@ -106,10 +115,47 @@ status_t CameraFrame::CameraSetup(const sp<Camera> &pOriCamera, int32_t cameraId
     mCamera->lock();
 
 
+	CameraParameters params(mCamera->getParameters());
+    Vector<Size> sizes;
+    params.getSupportedVideoSizes(sizes);
+    const char* colorFormat = params.get( CameraParameters::KEY_VIDEO_FRAME_FORMAT);//yuv420sp
+    int32_t frameRateActual = params.getPreviewFrameRate();
+	int32_t previewWidth  = -1, previewHeight  = -1;
+	int32_t videoWidth  = -1, videoHeight  = -1;
+    if (sizes.size() > 0) {
+
+		// video size is the same as preview size
+		params.getPreviewSize(&previewWidth, &previewHeight);
+		// video size may not be the same as preview
+		params.getVideoSize(&videoWidth, &videoHeight);
+		GLOGW("color format (%s) previewWidth:%d previewHeight:%d videoWidth:%d, videoHeight:%d",
+			   colorFormat, previewWidth, previewHeight, videoWidth, videoHeight);
+	}
+
+    AMediaFormat*format = mSymbols.AMediaFormat.newfmt();
+    mSymbols.AMediaFormat.setString(format, "mime", "video/avc");
+    mSymbols.AMediaFormat.setInt32(format, "width", videoWidth);
+    mSymbols.AMediaFormat.setInt32(format, "height", videoHeight);
+    mSymbols.AMediaFormat.setInt32(format, "frame-rate", frameRateActual);
+    mSymbols.AMediaFormat.setInt32(format, "bitrate", videoWidth*videoHeight*5);
+    mSymbols.AMediaFormat.setInt32(format, "color-format", 21);
+    mSymbols.AMediaFormat.setInt32(format, "i-frame-interval", 2);
+
+    if (mSymbols.AMediaCodec.configure(mCodec, format, NULL, NULL, MediaCodec::CONFIGURE_FLAG_ENCODE) != AMEDIA_OK)
+    {
+        GLOGE("AMediaCodec.configure failed");
+    }else
+    	GLOGW("AMediaCodec.configure successful.");
+
     //set true,data size would be 8 byte
     if (OK == mCamera->storeMetaDataInBuffers(true)) {
     	GLOGE("camera storeMetaDataInBuffers true");
     }
+
+    mSymbols.AMediaFormat.deletefmt(format);
+
+    if (mSymbols.AMediaCodec.start(mCodec) != AMEDIA_OK)
+        GLOGE("AMediaCodec.start failed");
 
     startCameraRecording();
 
@@ -232,6 +278,15 @@ void CameraFrame::stopCameraRecording() {
 
 void CameraFrame::dataCallbackTimestamp(int64_t timestampUs, int32_t msgType, const sp<IMemory> &data) {
 	GLOGW("CameraFrame::dataCallbackTimestamp: timestamp %lld us datasize:%d", timestampUs, data->size());
+
+	int index = mSymbols.AMediaCodec.dequeueInputBuffer(mCodec, 0);//int64_t timeoutUs
+	GLOGE("AMediaCodec.dequeueInputBuffer value:%d", index);
+	if(index>=0) {
+		uint8_t *p_mc_buf;
+		size_t i_mc_size;
+		p_mc_buf = mSymbols.AMediaCodec.getInputBuffer(mCodec, index, &i_mc_size);
+		GLOGE("AMediaCodec.getInputBuffer mcSize:%d", i_mc_size);
+	}
 
 	releaseRecordingFrame(data);
 }

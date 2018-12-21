@@ -10,12 +10,20 @@
 #include <utils/RefBase.h>
 #include <utils/String16.h>
 
+
+
 //using namespace android;
 namespace android {
+
+#include "mediacodec.h"
+#include "mediaextrator.h"
 
 class IMemory;
 class Camera;
 class Surface;
+
+struct AMediaFormat;
+typedef struct AMediaFormat AMediaFormat;
 
 class CameraFrame {
 public:
@@ -30,20 +38,20 @@ public:
 protected:
 
     class ProxyListener: public BnCameraRecordingProxyListener {
-    public:
-        ProxyListener(CameraFrame* pSource);
-        virtual void dataCallbackTimestamp(int64_t timestampUs, int32_t msgType,
-                const sp<IMemory> &data);
+		public:
+			ProxyListener(CameraFrame* pSource);
+			virtual void dataCallbackTimestamp(int64_t timestampUs, int32_t msgType,
+					const sp<IMemory> &data);
 
-    private:
-        CameraFrame* mSource;
+		private:
+			CameraFrame* mSource;
     };
 
     // isBinderAlive needs linkToDeath to work.
     class DeathNotifier: public IBinder::DeathRecipient {
-    public:
-        DeathNotifier() {}
-        virtual void binderDied(const wp<IBinder>& who);
+		public:
+			DeathNotifier() {}
+			virtual void binderDied(const wp<IBinder>& who);
     };
 
     enum CameraFlags {
@@ -67,7 +75,13 @@ private:
     sp<Camera>   mCamera;
     sp<ICameraRecordingProxy>   mCameraRecordingProxy;
     sp<DeathNotifier> mDeathNotifier;
+
+    struct symext 		mSymbols;
+    AMediaCodec*	 	mCodec;
 };
+
+
+
 
 }
 

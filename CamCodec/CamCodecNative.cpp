@@ -58,7 +58,7 @@ static bool process_media_recorder_call(JNIEnv *env, status_t opStatus, const ch
     return false;
 }
 
-static int StartCamCodec(JNIEnv* env, jobject thiz, jobject camera)
+static int StartCamCodec(JNIEnv* env, jobject, jobject camera)
 {
 	int rest = -1;
 	if(gCamSource==NULL) {
@@ -74,7 +74,7 @@ static int StartCamCodec(JNIEnv* env, jobject thiz, jobject camera)
 	return rest;
 }
 
-static int StopCamCodec(JNIEnv *env, jobject thiz)
+static int StopCamCodec(JNIEnv *, jobject)
 {
     ALOGV("stop");
     int rest = -1;
@@ -88,7 +88,7 @@ static int StopCamCodec(JNIEnv *env, jobject thiz)
 }
 
 static void
-setParameter(JNIEnv *env, jobject thiz, jstring params)
+setParameter(JNIEnv *env, jobject, jstring params)
 {
     ALOGV("setParameter()");
     if (params == NULL) {
@@ -106,33 +106,6 @@ setParameter(JNIEnv *env, jobject thiz, jstring params)
 
     //process_media_recorder_call(env, mr->setParameters(String8(params8)), "java/lang/RuntimeException", "setParameter failed.");
     env->ReleaseStringUTFChars(params,params8);
-}
-
-
-static void
-_prepare(JNIEnv *env, jobject thiz)
-{
-    ALOGV("prepare");
-//    MediaRecorderClient* mr = getMediaRecorder(env, thiz);
-//
-//    jobject surface = env->GetObjectField(thiz, fields.surface);
-//    if (surface != NULL) {
-//        const sp<Surface> native_surface = get_surface(env, surface);
-//
-//        // The application may misbehave and
-//        // the preview surface becomes unavailable
-//        if (native_surface.get() == 0) {
-//            ALOGE("Application lost the surface");
-//            jniThrowException(env, "java/io/IOException", "invalid preview surface");
-//            return;
-//        }
-//
-//        ALOGI("prepare: surface=%p", native_surface.get());
-//        if (process_media_recorder_call(env, mr->setPreviewSurface(native_surface->getIGraphicBufferProducer()), "java/lang/RuntimeException", "setPreviewSurface failed.")) {
-//            return;
-//        }
-//    }
-//    process_media_recorder_call(env, mr->prepare(), "java/io/IOException", "prepare failed.");
 }
 
 // ----------------------------------------------------------------------------
@@ -167,7 +140,7 @@ int myRegisterNativeMethods(JNIEnv* env, const char* className, const JNINativeM
 	return 0;
 }
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved) 
+jint JNI_OnLoad(JavaVM* vm, void*)
 {
 	JNIEnv* env = NULL;
 	jint result = JNI_ERR;

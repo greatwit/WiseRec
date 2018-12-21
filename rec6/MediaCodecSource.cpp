@@ -394,16 +394,17 @@ status_t MediaCodecSource::initEncoder() {
     mCodecLooper->setName("codec_looper");
     mCodecLooper->start();
 
-    if (mFlags & FLAG_USE_METADATA_INPUT) {
-        mOutputFormat->setInt32("store-metadata-in-buffers", 1);
-    }
+//    if (mFlags & FLAG_USE_METADATA_INPUT) {
+//        mOutputFormat->setInt32("store-metadata-in-buffers", 1);
+//    }
 
-    if (mFlags & FLAG_USE_SURFACE_INPUT) {
-        mOutputFormat->setInt32("create-input-buffers-suspended", 1);
-    }
+//    if (mFlags & FLAG_USE_SURFACE_INPUT) {
+//        mOutputFormat->setInt32("create-input-buffers-suspended", 1);
+//    }
 
     AString outputMIME;
     CHECK(mOutputFormat->findString("mime", &outputMIME));
+    GLOGE("mEncoder mime type:%s", outputMIME.c_str());
 
     mEncoder = MediaCodec::CreateByType(
             mCodecLooper, outputMIME.c_str(), true /* encoder */);
@@ -412,7 +413,18 @@ status_t MediaCodecSource::initEncoder() {
         return NO_INIT;
     }
 
-    ALOGV("output format is '%s'", mOutputFormat->debugString(0).c_str());
+    GLOGE("output format is '%s'", mOutputFormat->debugString(0).c_str());
+
+    int w = 1280,h = 720;
+    mOutputFormat->setInt32("width", w);
+    mOutputFormat->setInt32("height", h);
+    mOutputFormat->setInt32( "frame-rate", 15);
+    mOutputFormat->setInt32( "bitrate", 12000000);
+    mOutputFormat->setInt32( "color-format", 19);
+    //mOutputFormat->setInt32( "i-frame-interval", 2);
+    //mOutputFormat->setInt32( "max-input-size", w*h*2);
+    //mOutputFormat->setInt32("store-metadata-in-buffers", 1);
+    //mOutputFormat->setInt32( "priority", 1);
 
     mEncoderActivityNotify = new AMessage(kWhatEncoderActivity, mReflector);
     mEncoder->setCallback(mEncoderActivityNotify);
@@ -422,6 +434,8 @@ status_t MediaCodecSource::initEncoder() {
                 NULL /* nativeWindow */,
                 NULL /* crypto */,
                 MediaCodec::CONFIGURE_FLAG_ENCODE);
+
+    GLOGI("encoder configure err:%d", err);
 
     if (err != OK) {
         return err;
@@ -593,6 +607,7 @@ status_t MediaCodecSource::feedEncoderInputBuffers() {
 
             sp<ABuffer> inbuf;
             status_t err = mEncoder->getInputBuffer(bufferIndex, &inbuf);
+            GLOGI("encoder get inputbuffer index:%d err:%d", bufferIndex, err);
             if (err != OK || inbuf == NULL) {
                 mbuf->release();
                 signalEOS();
@@ -600,7 +615,7 @@ status_t MediaCodecSource::feedEncoderInputBuffers() {
             }
 
             size = mbuf->size();
-
+            GLOGE("memcpy to encoder size:%d", size);
             memcpy(inbuf->data(), mbuf->data(), size);
 
             if (mIsVideo) {
