@@ -3,3 +3,5 @@ prebuilts/ndk/9/platforms/android-13/arch-arm/usr/include/asm-generic/errno-base
 
 system/core/include/utils/Errors.h
 
+native/include/media/openmax/OMX_IVCommon.h
+native/include/media/openmax/OMX_IVCommon.h
