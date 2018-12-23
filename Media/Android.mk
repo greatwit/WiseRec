@@ -37,6 +37,8 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/Camera \
 	$(LOCAL_PATH)/../common \
 
+LOCAL_C_INCLUDES += external/stlport/stlport bionic
+
 LOCAL_MODULE:= libCameraSrc
 
 include $(BUILD_SHARED_LIBRARY)
