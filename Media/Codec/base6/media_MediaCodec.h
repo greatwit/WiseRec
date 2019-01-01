@@ -89,11 +89,8 @@ struct JMediaCodec : public AHandler {
 
     status_t dequeueInputBuffer(size_t *index, int64_t timeoutUs);
 
-    status_t dequeueOutputBuffer(
-            JNIEnv *env, jobject bufferInfo, size_t *index, int64_t timeoutUs);
-
+    status_t dequeueOutputBuffer(JNIEnv *env, jobject bufferInfo, size_t *index, int64_t timeoutUs);
     status_t dequeueOutputBuffer(JNIEnv *env, size_t *index, size_t &offset, size_t &size, int64_t &timeUs, uint32_t &flags, int64_t timeoutUs);
-
 
     status_t releaseOutputBuffer(
             size_t index, bool render, bool updatePTS, int64_t timestampNs);

@@ -4,9 +4,7 @@
 #include <stdlib.h>
 
 #include <gui/Surface.h>
-#include <media/ICrypto.h>
-#include <media/stagefright/foundation/AMessage.h>
-#include "android_runtime/AndroidRuntime.h"
+#include <jni.h>//#include "android_runtime/AndroidRuntime.h"
 
 #include "IVideoCallback.h"
 
@@ -22,7 +20,6 @@ typedef void SetDisplayOrientation_t(int value);
 
 namespace android 
 {
-	
 
 class CameraLib
 {

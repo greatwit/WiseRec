@@ -36,7 +36,7 @@ struct JMediaCodec;
 
 
 
-struct CodecBase : public Thread
+class CodecBase : public Thread
 {
      public:  //api
     	CodecBase( const char *name, bool nameIsType, bool encoder);
@@ -48,15 +48,12 @@ struct CodecBase : public Thread
 		status_t stopCodec();
 
 		status_t addBuffer(char*data, int len);
-		
-
 	
     protected:
     	virtual ~CodecBase();
 		virtual bool threadLoop();
 		
 		status_t getCodecBuffer();
-	
 
     private:
         sp<JMediaCodec> 	mCodec;
@@ -68,7 +65,6 @@ struct CodecBase : public Thread
 		int				miInputArrayLen;
 		int				miOutputArrayLen;
 
-	  
 		JNIEnv 			*mpEnv;
 		int 			mCount;
 };

@@ -1,6 +1,6 @@
 
-#ifndef __CAPTURE__H__
-#define __CAPTURE__H__
+#ifndef __VIDEO_FRAME__H__
+#define __VIDEO_FRAME__H__
 
 
 #ifdef __cplusplus
@@ -8,15 +8,14 @@ extern "C"
 {
 #endif
 
-typedef struct V4L2BUF_t
+typedef struct VideoFrame_t
 {
 	unsigned int addrPhyY;
 	unsigned int addrVirY;
 	int index;
 	int length;
 	long long timeStamp;
-}V4L2BUF_t;
-
+}VideoFrame;
 
 #ifdef __cplusplus
 }

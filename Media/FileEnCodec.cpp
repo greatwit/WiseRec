@@ -19,6 +19,7 @@ int intToBytes(int val , char*outData)
 
 FileEnCodec::FileEnCodec()
 			:mbRunning(false)
+			,mFirstFrame(true)
 			,mFile(NULL)
 {
 	GLOGV("function %s,line:%d construct.",__FUNCTION__,__LINE__);
@@ -61,19 +62,16 @@ bool FileEnCodec::DeInit()
 
 bool FileEnCodec::StartVideo(int deivceid)
 {
-
 	//mCodec->startCodec();
 	CodecBaseLib::getInstance()->StartCodec();
 
 	GLOGD("function %s,line:%d",__FUNCTION__,__LINE__);
-
 
 	return true;
 }
 
 bool FileEnCodec::StopVideo()
 {
-
 	GLOGW("function %s,line:%d StopVideo 0",__FUNCTION__,__LINE__);
 
 	//mCodec->stopCodec();

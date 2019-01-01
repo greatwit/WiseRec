@@ -51,7 +51,7 @@ class CameraEncodec : public ICodecCallback, public IVideoCallback
 
 		void AddDecodecSource(char *data, int len);
 		virtual void onCodecBuffer(struct CodecBuffer& buff);
-		virtual void VideoSource(V4L2BUF_t *pBuf);
+		virtual void VideoSource(VideoFrame *pBuf);
 		
 		
 	protected:

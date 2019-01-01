@@ -1,8 +1,6 @@
 
 #include "CameraListen.h"
 #define TAG "Camera4"
-#include "ComDefine.h"
-
 
 using namespace android;
 
@@ -11,23 +9,19 @@ using namespace android;
 // connect to camera service
 int JNICameraListen::CameraSetup(jint cameraId, jstring clientPackageName)
 {
-	JNIEnv *env = AndroidRuntime::getJNIEnv();
-    // Convert jstring to String16
-    const char16_t *rawClientName = env->GetStringChars(clientPackageName, NULL);
-    jsize rawClientNameLen = env->GetStringLength(clientPackageName);
-    String16 clientName(rawClientName, rawClientNameLen);
-    env->ReleaseStringChars(clientPackageName, rawClientName);
-
-    mCamera = Camera::connect(cameraId, clientName, Camera::USE_CALLING_UID);
+	UNUSER(clientPackageName); 
+	
+	if(mCamera == NULL)
+		mCamera = Camera::connect(cameraId);
 
     if (mCamera == NULL) {
-        GLOGW("Fail to connect to camera service");
+        ALOGV("Fail to connect to camera service");
         return -1;
     }
 
     // make sure camera hardware is alive
     if (mCamera->getStatus() != NO_ERROR) {
-        GLOGW("Camera initialization failed");
+        ALOGV("Camera initialization failed");
         return -2;
     }
 
@@ -50,27 +44,22 @@ void JNICameraListen::setParameters(jstring params)
 		env->ReleaseStringCritical(params, str);
 		
 		if (mCamera->setParameters(params8) != NO_ERROR) {
-			GLOGE("Camera setParameters failed");
+			ALOGE("Camera setParameters failed");
 		}
 	}
 }
 
 void JNICameraListen::startPreview(const sp<Surface> &surface)
 {
-    GLOGW("startPreview");
+    ALOGV("startPreview");
 
 	if(surface!=NULL && mCamera != NULL)
 	{
-	    sp<IGraphicBufferProducer> gbp;
-		if (surface != NULL) {
-			gbp = surface->getIGraphicBufferProducer();
-		}
-	    if (mCamera->setPreviewTexture(gbp) != NO_ERROR) {
-	    	GLOGE("setPreviewTexture failed");
-	    }
+		if (mCamera->setPreviewDisplay(surface) != NO_ERROR)
+			ALOGE("Camera setPreviewDisplay failed");
 	
 		if (mCamera->startPreview() != NO_ERROR)
-			GLOGE( "startPreview failed");
+			ALOGE( "startPreview failed");
 	}
 }
 

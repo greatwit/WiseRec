@@ -39,7 +39,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_C_INCLUDES += external/stlport/stlport bionic
 
-LOCAL_MODULE:= libCameraSrc
+LOCAL_MODULE:= libgreat_media
 
 include $(BUILD_SHARED_LIBRARY)
 

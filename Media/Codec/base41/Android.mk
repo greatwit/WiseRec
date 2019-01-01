@@ -1,4 +1,5 @@
 LOCAL_PATH:= $(call my-dir)
+CODEC_PATH:= $(LOCAL_PATH)
 
 ##################################################
 ###                  codec lib                 ###
@@ -7,7 +8,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/Camera4.c*)) \
+	$(subst $(LOCAL_PATH)/,,$(wildcard $(CODEC_PATH)/*.c*)) \
 	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/../*.c*))
 
 #JCrypto rely libbinder libmedia
@@ -18,8 +19,10 @@ LOCAL_SHARED_LIBRARIES := \
     libutils \
     libcutils \
     libbinder \
-    libcamera_client \
-    libgui
+    libmedia \
+    libgui \
+    libstagefright \
+    libstagefright_foundation
 
 
 LOCAL_C_INCLUDES += \
@@ -33,7 +36,7 @@ LOCAL_C_INCLUDES += \
 
 
 
-LOCAL_MODULE:= libCamera
+LOCAL_MODULE:= libCodecBase
 
 include $(BUILD_SHARED_LIBRARY)
 

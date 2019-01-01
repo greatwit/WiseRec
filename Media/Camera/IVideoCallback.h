@@ -2,7 +2,7 @@
 #ifndef I_VIDEO_CALLBACK
 #define I_VIDEO_CALLBACK
 
-#include "capture.h"
+#include "VideoFrame.h"
 
 
 
@@ -10,7 +10,7 @@ class IVideoCallback
 {
 	public:
 		virtual ~IVideoCallback(){}
-		virtual void VideoSource(V4L2BUF_t *pBuf)=0;
+		virtual void VideoSource(VideoFrame *pBuf)=0;
 };
 
 #endif

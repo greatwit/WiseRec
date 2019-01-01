@@ -1,6 +1,7 @@
 
-#include "CodecBase.h"
+#include <media/stagefright/foundation/AString.h>
 
+#include "CodecBase.h"
 #include "media_MediaCodec.h"
 
 #include "ComDefine.h"
@@ -87,7 +88,6 @@ status_t CodecBase::startCodec()
 				GLOGI("function %s,line:%d BufferAddress:%d",__FUNCTION__,__LINE__, mpOutputBufferPoint[i]);
 			}
 		}
-
 	}
 
 	run("CodecBase", PRIORITY_URGENT_DISPLAY);

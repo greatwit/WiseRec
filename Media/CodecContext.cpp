@@ -22,7 +22,7 @@ namespace android
 	{
 		if(mLibHandle)
 		{
-			dlclose(mLibHandle); // ¹Ø±Õso¾ä±ú
+			dlclose(mLibHandle); // ï¿½Ø±ï¿½soï¿½ï¿½ï¿½
 			mLibHandle = NULL;
 		}
 		
@@ -43,20 +43,24 @@ namespace android
 			switch(version)
 			{
 				case 17: 		//17 4.2, 4.2.2
-				mLibHandle = dlopen("libCodecBase4.so", RTLD_NOW); // ÔØÈë.soÎÄ¼þ RTLD_LAZY
+				mLibHandle = dlopen("libCodecBase4.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
 					break;
+
 				case 18: 		//18 4.3
+				mLibHandle = dlopen("libCodecBase4.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
+					break;
+
 				case 19:		//19 4.4
 				case 20:		//20 4.4W
 					break;
 					
 				case 21: 		//21 5.0
 				case 22:		//22 5.1
-				mLibHandle = dlopen("libCodecBase5.so", RTLD_NOW); // ÔØÈë.soÎÄ¼þ RTLD_LAZY
+				mLibHandle = dlopen("libCodecBase5.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
 					break;
 					
 				case 23: 		//6.0
-				mLibHandle = dlopen("libCodecBase6.so", RTLD_NOW); // ÔØÈë.soÎÄ¼þ RTLD_LAZY
+				mLibHandle = dlopen("libCodecBase6.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
 					break;
 					
 				case 24:		//7.0
@@ -74,10 +78,10 @@ namespace android
 			{
 				ALOGE("Error: load so  failed.\n");
 			}
-			dlerror(); // Çå¿Õ´íÎóÐÅÏ¢
+			dlerror(); // ï¿½ï¿½Õ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 		
 		
-		testAdd 					= (test_t*)dlsym(mLibHandle, "test"); // ÔØÈëº¯Êý
+		testAdd 					= (test_t*)dlsym(mLibHandle, "test"); // ï¿½ï¿½ï¿½ëº¯ï¿½ï¿½
 		
 		CodecCreate 				= (CodecCreate_t*)dlsym(mLibHandle, "CodecCreate");
 		RegisterBufferCall			= (RegisterBufferCall_t*)dlsym(mLibHandle, "RegisterBufferCall");
@@ -95,7 +99,7 @@ namespace android
 			return false;
 		}
 
-		ALOGE("testAdd 57 + 3 = %d\n", testAdd(57, 3)); // µ÷ÓÃº¯Êý
+		ALOGE("testAdd 57 + 3 = %d\n", testAdd(57, 3)); // ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½
 			
 		return mLibHandle!=NULL;
 	}

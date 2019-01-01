@@ -28,14 +28,13 @@ CameraEncodec::~CameraEncodec()
 {
 	GLOGI("function %s,line:%d Destructor.",__FUNCTION__,__LINE__);
 
-#if SAVE_FILE
-	if(mFile) fclose(mFile);
-#endif
+	#if SAVE_FILE
+		if(mFile) fclose(mFile);
+	#endif
 }
 
 bool CameraEncodec::CreateCodec(JNIEnv *env, jobject thiz, const sp<AMessage> &format, const sp<Surface> &surface, const sp<ICrypto> &crypto, int flags, short sendPort)
 {
-
 	return true;
 }
 
@@ -125,15 +124,15 @@ bool CameraEncodec::StopVideo()
 }
 
 //camera frame callback
-void CameraEncodec::VideoSource(V4L2BUF_t *pBuf)
+void CameraEncodec::VideoSource(VideoFrame *pBuf)
 {
 	GLOGW("function %s,line:%d len:%d", __FUNCTION__, __LINE__, pBuf->length);
 
 	char* data = (char*)pBuf->addrVirY;
-	int ylen  = pBuf->length*2/3;
-	int uvlen = ylen/2;
-	char tmp  = '/0';
-	for(int i=0;i<uvlen;) //NV21 to NV12
+	int ylen   = pBuf->length*2/3;
+	int uvlen  = ylen/2;
+	char tmp   = '/0';
+	for(int i=0; i<uvlen;) //NV21 to NV12
 	{
 		tmp 			= data[ylen+i];
 		data[ylen+i] 	= data[ylen+i+1];

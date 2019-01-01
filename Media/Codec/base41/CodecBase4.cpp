@@ -3,23 +3,22 @@
 
 #include "media_MediaCodec.h"
 
-#include "Configure.h"
 #include "ComDefine.h"
-#define TAG "CodecBase6"
+#define TAG "CodecBase4"
 
 namespace android 
 {
 
 status_t CodecBase::CreateCodec(const sp<AMessage> &format, const sp<Surface> &surface, const sp<ICrypto> &crypto, int flags)
 {
-	status_t err;
+	status_t err; 
 
 	GLOGD("function %s,line:%d configure...1", __FUNCTION__, __LINE__);
 	
-	sp<IGraphicBufferProducer> bufferProducer;
+	sp<ISurfaceTexture> surfaceTexture;
 	if(surface!=NULL)
-		bufferProducer = surface->getIGraphicBufferProducer();
-	err = mCodec->configure(format, bufferProducer, crypto, flags);
+		surfaceTexture = surface->getSurfaceTexture();
+	err = mCodec->configure(format, surfaceTexture, crypto, flags);
 	GLOGD("function %s,line:%d configure...2 err:%d", __FUNCTION__, __LINE__, err);
 
 	return err;

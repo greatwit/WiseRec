@@ -41,8 +41,8 @@ extern "C"
 static FileEnCodec    	*mpFileEncoder 	= NULL;
 static CameraEncodec   	*mpCamEncodec   = NULL;
  
-#define CLASS_PATH	"com/wise/mediarec/Recorder/CameraSrc"
-
+//#define CLASS_PATH	"com/wise/mediarec/Recorder/CameraSrc"
+#define CLASS_PATH	"com/great/happyness/Codec/CodecMedia"
 //////////////////////////////////////////////////////////////////////////////////////file codec//////////////////////////////////////////////////////////////////////////////////////////////
 
 

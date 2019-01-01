@@ -2,10 +2,10 @@
 
 
 mm
-echo -e 'build rec media done..........................\n'
+echo -e 'build native camera done..........................\n'
 
 plib=../../../../../out/target/product/generic/system/lib
-cp $plib/libgreat_media.so ./libgreat_media.so
+mv $plib/libNativeCamera.so ./libNativeCamera.so
 echo -e 'copy libs done...........................\n'
 
 

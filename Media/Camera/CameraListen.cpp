@@ -81,7 +81,7 @@ void JNICameraListen::postData(int32_t msgType, const sp<IMemory>& dataPtr, came
 			//const jbyte* data = reinterpret_cast<const jbyte*>(heapBase + offset);
 			if(mCallback)
 			{
-				V4L2BUF_t buff;
+				VideoFrame buff;
 				buff.addrVirY = heapBase;
 				buff.length   = size;
 				mCallback->VideoSource(&buff);

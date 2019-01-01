@@ -1,9 +1,7 @@
+
+
+#include <dlfcn.h>
 #include "CameraContext.h"
-
-#include<dlfcn.h>
-
-#include <utils/Log.h>
-
 
 #include "ComDefine.h"
 #define TAG "CameraLib"
@@ -13,16 +11,14 @@ namespace android
 
 	CameraLib* CameraLib::mSelf = NULL;
 
-	CameraLib::CameraLib():mLibHandle(NULL)
-	{
-		
+	CameraLib::CameraLib():mLibHandle(NULL) {
+
 	}
 
-	CameraLib::~CameraLib()
-	{
+	CameraLib::~CameraLib() {
 		if(mLibHandle)
 		{
-			dlclose(mLibHandle); // ¹Ø±Õso¾ä±ú
+			dlclose(mLibHandle); // ï¿½Ø±ï¿½soï¿½ï¿½ï¿½
 			mLibHandle = NULL;
 		}
 	}
@@ -42,20 +38,24 @@ namespace android
 			switch(version)
 			{
 				case 17: 		//17 4.2, 4.2.2
-				mLibHandle = dlopen("libCamera4.so", RTLD_NOW); // ÔØÈë.soÎÄ¼þ RTLD_LAZY
+					mLibHandle = dlopen("libCamera41.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
 					break;
+
 				case 18: 		//18 4.3
+					mLibHandle = dlopen("libCamera4.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
+					break;
+
 				case 19:		//19 4.4
 				case 20:		//20 4.4W
 					break;
 					
 				case 21: 		//21 5.0
 				case 22:		//22 5.1
-				mLibHandle = dlopen("libCamera5.so", RTLD_NOW); // ÔØÈë.soÎÄ¼þ RTLD_LAZY
+					mLibHandle = dlopen("libCamera5.so", RTLD_NOW); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
 					break;
 					
 				case 23: 		//6.0
-				mLibHandle = dlopen("libCamera6.so", RTLD_LAZY); // ÔØÈë.soÎÄ¼þ RTLD_LAZY
+					mLibHandle = dlopen("libCamera6.so", RTLD_LAZY); // ï¿½ï¿½ï¿½ï¿½.soï¿½Ä¼ï¿½ RTLD_LAZY
 					break;
 					
 				case 24:		//7.0
@@ -69,7 +69,7 @@ namespace android
 					break;
 			}
 			
-			const char *err = dlerror(); 			//Çå¿Õ´íÎóÐÅÏ¢
+			const char *err = dlerror(); 			//ï¿½ï¿½Õ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 			
 			if (mLibHandle == NULL)
 				GLOGE("function %s,line:%d load camera failed stderr:%s", __FUNCTION__, __LINE__, err);
@@ -85,7 +85,6 @@ namespace android
 		StopPreview 					= (StopPreview_t*)dlsym(mLibHandle, "StopPreview");
 		SetDisplayOrientation			= (SetDisplayOrientation_t*)dlsym(mLibHandle, "SetDisplayOrientation");
 		
-		
 		err = dlerror();
 		if (NULL != err) 
 		{
@@ -100,7 +99,7 @@ namespace android
 	{
 		if(mLibHandle)
 		{
-			dlclose(mLibHandle); // ¹Ø±Õso¾ä±ú
+			dlclose(mLibHandle); // ï¿½Ø±ï¿½soï¿½ï¿½ï¿½
 			mLibHandle = NULL;
 		}
 		return mLibHandle==NULL;
