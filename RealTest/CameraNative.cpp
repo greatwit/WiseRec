@@ -14,18 +14,50 @@
 
 #define CLASS_PATH	"com/great/happyness/Codec/CodecMedia"
 
+class VideoCallback : public IVideoCallback
+{
+public:
+	void VideoSource(VideoFrame *pBuf) {
 
-void func() {
+	}
+};
+
+VideoCallback *mVcall = NULL;
+
+void CreateCamera(char*packName, int cameraId, const sp<Surface> &cameraSurf) {
     //读取sdk版本
     char szSdkVer[32]={0};
     __system_property_get("ro.build.version.sdk", szSdkVer);
     GLOGW("sdk:%d",atoi(szSdkVer));
 
+    if(!mVcall)
+    	mVcall = new VideoCallback();
+
 	JNIEnv *env = AndroidRuntime::getJNIEnv();
-	jstring clientPackageName = env->NewStringUTF("com.greatmedia");
+	jstring clientPackageName = env->NewStringUTF(packName);
 	bool bResult = CameraLib::getInstance()->LoadCameraLib(atoi(szSdkVer));
+	if(bResult) {
+		int camSet = CameraLib::getInstance()->CameraSetup(mVcall, cameraId, clientPackageName);
+		if(camSet<0) {
+			GLOGE("function %s,line:%d CameraSetup failed.", __FUNCTION__, __LINE__);
+			return ;
+		}
+		CameraLib::getInstance()->StartPreview(cameraSurf);
+	}
+	else
+		GLOGE("function %s,line:%d LoadCameraLib failed.", __FUNCTION__, __LINE__);
 }
 
+
+void ReleaseCamera() {
+	CameraLib::getInstance()->CameraRelease();
+CameraLib::getInstance()->ReleaseLib();
+
+	if(mVcall) {
+		delete mVcall;
+		mVcall = NULL;
+	}
+}
 
 static JNINativeMethod gMethods[] =
 {
