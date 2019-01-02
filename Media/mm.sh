@@ -2,11 +2,13 @@
 
 
 mm
-echo -e 'build rec media done..........................\n'
+
+TARGET=libgreat_media.so
+TARGET_=libgreat_media.so
+
+echo -e "build ${TARGET} done..........................\n"
 
 plib=../../../../../out/target/product/generic/system/lib
-cp $plib/libgreat_media.so ./libgreat_media.so
-echo -e 'copy libs done...........................\n'
-
-
+mv $plib/$TARGET ./$TARGET
+echo -e "mv ${TARGET} done...........................\n"
 

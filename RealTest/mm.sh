@@ -2,11 +2,15 @@
 
 
 mm
-echo -e 'build native camera done..........................\n'
+
+TARGET=libNativeCamera.so
+TARGET_=libNativeCamera.so
+
+echo -e "build ${TARGET} done..........................\n"
 
 plib=../../../../../out/target/product/generic/system/lib
-mv $plib/libNativeCamera.so ./libNativeCamera.so
-echo -e 'copy libs done...........................\n'
+mv $plib/$TARGET ./$TARGET
+echo -e "mv ${TARGET} done...........................\n"
 
 
 

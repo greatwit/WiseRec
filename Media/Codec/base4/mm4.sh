@@ -2,11 +2,15 @@
 
 
 mm
-echo -e 'build rec media done..........................\n'
+
+TARGET=libCodecBase.so
+TARGET_=libCodecBase4.so
+
+echo -e "build ${TARGET} done..........................\n"
 
 plib=../../../../../../../out/target/product/generic/system/lib
-mv $plib/libCodecBase.so ../../bin/libCodecBase4.so
-echo -e 'mv libs done...........................\n'
+mv $plib/$TARGET ../../bin/$TARGET_
+echo -e "mv ${TARGET} done...........................\n"
 
 
 
