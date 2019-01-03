@@ -1,6 +1,8 @@
 
 
 #include <dlfcn.h>
+#include <sys/system_properties.h>
+
 #include "CameraContext.h"
 
 #include "ComDefine.h"
@@ -12,14 +14,22 @@ namespace android
 	CameraLib* CameraLib::mSelf = NULL;
 
 	CameraLib::CameraLib():mLibHandle(NULL) {
+	    //读取sdk版本
+	    char szSdkVer[32]={0};
+	    __system_property_get("ro.build.version.sdk", szSdkVer);
+	    GLOGW("sdk:%d",atoi(szSdkVer));
 
+	    LoadCameraLib(atoi(szSdkVer));
 	}
 
 	CameraLib::~CameraLib() {
-		if(mLibHandle)
-		{
+		if(mLibHandle) {
 			dlclose(mLibHandle); // �ر�so���
 			mLibHandle = NULL;
+		}
+		if(mSelf) {
+			delete mSelf;
+			mSelf = NULL;
 		}
 	}
 
@@ -86,8 +96,7 @@ namespace android
 		SetDisplayOrientation			= (SetDisplayOrientation_t*)dlsym(mLibHandle, "SetDisplayOrientation");
 		
 		err = dlerror();
-		if (NULL != err) 
-		{
+		if (NULL != err) {
 			GLOGE("dlsym stderr:%s\n", err);
 			return false;
 		}
@@ -97,8 +106,7 @@ namespace android
 	
 	bool CameraLib::ReleaseLib()
 	{
-		if(mLibHandle)
-		{
+		if(mLibHandle) {
 			dlclose(mLibHandle); // �ر�so���
 			mLibHandle = NULL;
 		}

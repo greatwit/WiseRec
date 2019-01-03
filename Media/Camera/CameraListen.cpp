@@ -21,7 +21,7 @@ sp<Camera> JNICameraListen::getCamera()
 
 void JNICameraListen::notify(int32_t msgType, int32_t ext1, int32_t ext2)
 {
-    GLOGD("function %s,line:%d notify",__FUNCTION__,__LINE__);
+    GLOGW("function %s,line:%d notify",__FUNCTION__,__LINE__);
 }
 
 void JNICameraListen::postData(int32_t msgType, const sp<IMemory>& dataPtr, camera_frame_metadata_t *metadata)
@@ -111,7 +111,7 @@ void JNICameraListen::postDataTimestamp(nsecs_t timestamp, int32_t msgType, cons
 int JNICameraListen::CameraRelease()
 {
     // TODO: Change to ALOGV
-	GLOGD("function %s,line:%d release camera",__FUNCTION__,__LINE__);
+	GLOGW("function %s,line:%d release camera",__FUNCTION__,__LINE__);
 	
 	// clear callbacks
 	if (mCamera != NULL) {
@@ -140,14 +140,14 @@ jstring JNICameraListen::getParameters()
 
 void JNICameraListen::stopPreview()
 {
-	GLOGV("function %s,line:%d stopPreview",__FUNCTION__,__LINE__);
+	GLOGW("function %s,line:%d stopPreview",__FUNCTION__,__LINE__);
 	if (mCamera != NULL)
 		mCamera->stopPreview();
 }
 
 void JNICameraListen::setDisplayOrientation(jint value)
 {
-	GLOGV("function %s,line:%d setDisplayOrientation",__FUNCTION__,__LINE__);
+	GLOGW("function %s,line:%d setDisplayOrientation",__FUNCTION__,__LINE__);
 	if(mCamera != NULL)
 		if (mCamera->sendCommand(CAMERA_CMD_SET_DISPLAY_ORIENTATION, value, 0) != NO_ERROR) {
 		GLOGE("function %s,line:%d set display orientation failed",__FUNCTION__,__LINE__);

@@ -1,73 +1,67 @@
 
 
 #include <stdio.h>
-
-#include <sys/system_properties.h>
-
-#include "CameraContext.h"
-
-#include "android_runtime/AndroidRuntime.h"
+#include "CameraDL.h"
+#include "android_runtime/android_view_Surface.h"
 
 #include "ComDefine.h"
 #define TAG "CameraNative"
 
+#define CLASS_PATH	"com/wise/mediarec/Recorder/NativeCamera"
 
-#define CLASS_PATH	"com/great/happyness/Codec/CodecMedia"
+CameraDL *gCamera = NULL;
 
-class VideoCallback : public IVideoCallback
+static jboolean OpenCamera(JNIEnv *env, jobject, jint cameraId, jstring clientName)
 {
-public:
-	void VideoSource(VideoFrame *pBuf) {
+	if(!gCamera)
+		gCamera = new CameraDL();
+	gCamera->CreateCamera(cameraId, clientName);
 
-	}
-};
-
-VideoCallback *mVcall = NULL;
-
-void CreateCamera(char*packName, int cameraId, const sp<Surface> &cameraSurf) {
-    //读取sdk版本
-    char szSdkVer[32]={0};
-    __system_property_get("ro.build.version.sdk", szSdkVer);
-    GLOGW("sdk:%d",atoi(szSdkVer));
-
-    if(!mVcall)
-    	mVcall = new VideoCallback();
-
-	JNIEnv *env = AndroidRuntime::getJNIEnv();
-	jstring clientPackageName = env->NewStringUTF(packName);
-	bool bResult = CameraLib::getInstance()->LoadCameraLib(atoi(szSdkVer));
-	if(bResult) {
-		int camSet = CameraLib::getInstance()->CameraSetup(mVcall, cameraId, clientPackageName);
-		if(camSet<0) {
-			GLOGE("function %s,line:%d CameraSetup failed.", __FUNCTION__, __LINE__);
-			return ;
-		}
-		CameraLib::getInstance()->StartPreview(cameraSurf);
-	}
-	else
-		GLOGE("function %s,line:%d LoadCameraLib failed.", __FUNCTION__, __LINE__);
+	return true;
 }
 
+static jboolean CloseCamera(JNIEnv *env, jobject) {
+	if(gCamera) {
+		gCamera->CloseCamera();
+		delete gCamera;
+		gCamera = NULL;
+	}
 
-void ReleaseCamera() {
-	CameraLib::getInstance()->CameraRelease();
-CameraLib::getInstance()->ReleaseLib();
+	return true;
+}
 
-	if(mVcall) {
-		delete mVcall;
-		mVcall = NULL;
+static void SetCameraParameter(JNIEnv *env, jobject, jstring params) {
+	gCamera->SetCameraParameter(params);
+}
+
+static jstring GetCameraParameter(JNIEnv *env, jobject) {
+	return gCamera->GetCameraParameter();
+}
+
+static void StartPreview(JNIEnv *env, jobject, jobject jsurface) {
+	if(jsurface!=NULL) {
+		sp<Surface> surface(android_view_Surface_getSurface(env, jsurface));
+		gCamera->StartPreview(surface);
 	}
 }
+
+static void StopPreview(JNIEnv *env, jobject) {
+	gCamera->StopPreview();
+}
+
 
 static JNINativeMethod gMethods[] =
 {
-
+		{ "OpenCamera", "(ILjava/lang/String;)Z", (void *)OpenCamera },
+		{ "CloseCamera", "()Z", (void *)CloseCamera },
+		{ "SetCameraParameter", "(Ljava/lang/String;)V", (void *)SetCameraParameter },
+		{ "GetCameraParameter", "()Ljava/lang/String;", (void *)GetCameraParameter },
+		{ "StartPreview", "(Landroid/view/Surface;)V", (void *)StartPreview },
+		{ "StopPreview", "()V", (void *)StopPreview },
 };
 
-int jniRegisterNativeMethods1(JNIEnv* env,
-							 const char* className,
-							 const JNINativeMethod* methods,
-							 int numMethods)
+int jniRegisterNativeMethods1(JNIEnv* env, const char* className,
+							  const JNINativeMethod* methods, int numMethods)
 {
 	jclass clazz;
 

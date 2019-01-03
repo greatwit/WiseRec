@@ -10,7 +10,8 @@ CODEC_PATH   = ../Media
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/CameraNative.c*)) \
+	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/CameraNative.cpp)) \
+	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/CameraDL.cpp)) \
 	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/$(CAMERA_PATH)/CameraContext.cpp))
 	
 
@@ -19,6 +20,7 @@ LOCAL_SHARED_LIBRARIES := \
     libandroid_runtime \
     liblog \
     libgui \
+    libutils \
     libdl	#libopen
 
 
