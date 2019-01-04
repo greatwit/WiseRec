@@ -18,11 +18,10 @@ LOCAL_SRC_FILES:= \
 #JCrypto rely libbinder libmedia
 LOCAL_SHARED_LIBRARIES := \
     libandroid_runtime \
-    liblog \
-    libgui \
     libutils \
     libdl	#libopen
 
+LOCAL_LDLIBS := -llog
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/../common \

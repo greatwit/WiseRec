@@ -19,7 +19,6 @@ class CameraDL : public IVideoCallback
 		void StopPreview();
 		void CloseCamera();
 
-
 		void VideoSource(VideoFrame *pBuf);
 
 	private:

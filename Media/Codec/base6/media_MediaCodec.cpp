@@ -20,7 +20,6 @@
 
 #include "media_MediaCodec.h"
 
-#include "media_MediaCrypto.h"
 #include "media_Utils.h"
 
 #include "android_runtime/AndroidRuntime.h"

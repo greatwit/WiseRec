@@ -1,8 +1,6 @@
 
 #include "CameraDL.h"
 
-#include "android_runtime/AndroidRuntime.h"
-
 #include "ComDefine.h"
 #define TAG "CameraDL"
 
@@ -26,7 +24,6 @@
 		}
 		else
 			GLOGE("function %s,line:%d LoadCameraLib failed.", __FUNCTION__, __LINE__);
-
 	}
 
 	void CameraDL::SetCameraParameter(jstring params) {
