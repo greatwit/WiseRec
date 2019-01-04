@@ -4,7 +4,7 @@
 mm
 
 TARGET=libCamera.so
-TARGET_=libCamera6.so
+TARGET_=libCamera4.so
 
 echo -e "build ${TARGET} done..........................\n"
 

@@ -25,7 +25,6 @@ namespace android
 			dlclose(mLibHandle); // �ر�so���
 			mLibHandle = NULL;
 		}
-		
 	}
 
 	CodecBaseLib*CodecBaseLib::getInstance()
