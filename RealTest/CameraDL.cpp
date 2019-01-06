@@ -5,7 +5,7 @@
 #define TAG "CameraDL"
 
 	CameraDL::CameraDL() {
-		mCamera = CameraLib::getInstance();
+		mCamera = CameraContext::getInstance();
 	}
 
 	CameraDL::~CameraDL() {
@@ -16,14 +16,14 @@
 		if(mCamera) {
 			//JNIEnv *env = AndroidRuntime::getJNIEnv();
 			//jstring clientPackageName = env->NewStringUTF(packName);
-			int camSet = CameraLib::getInstance()->CameraSetup(this, cameraId, clientPackageName);
+			int camSet = CameraContext::getInstance()->CameraSetup(this, cameraId, clientPackageName);
 			if(camSet<0) {
 				GLOGE("function %s,line:%d CameraSetup failed.", __FUNCTION__, __LINE__);
 				return ;
 			}
 		}
 		else
-			GLOGE("function %s,line:%d LoadCameraLib failed.", __FUNCTION__, __LINE__);
+			GLOGE("function %s,line:%d LoadCameraContext failed.", __FUNCTION__, __LINE__);
 	}
 
 	void CameraDL::SetCameraParameter(jstring params) {

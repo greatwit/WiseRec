@@ -22,13 +22,13 @@ typedef void SetDisplayOrientation_t(int value);
 //namespace android
 //{
 
-class CameraLib
+class CameraContext
 {
 	public:
-		CameraLib();
-		~CameraLib();
-		static CameraLib*getInstance();
-		bool LoadCameraLib(int version);
+		CameraContext();
+		~CameraContext();
+		static CameraContext*getInstance();
+		bool LoadCameraContext(int version);
 		bool ReleaseLib();
 		
 		CameraSetup_t* 				CameraSetup;
@@ -41,7 +41,7 @@ class CameraLib
 
 		
 	private:
-		static CameraLib*mSelf;
+		static CameraContext*mSelf;
 		void *mLibHandle;
 };
 

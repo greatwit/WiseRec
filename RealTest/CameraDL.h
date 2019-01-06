@@ -5,7 +5,6 @@
 #include "CameraContext.h"
 
 #include <jni.h>
-//#include <gui/Surface.h>
 
 class CameraDL : public IVideoCallback
 {
@@ -23,7 +22,7 @@ class CameraDL : public IVideoCallback
 		void VideoSource(VideoFrame *pBuf);
 
 	private:
-		CameraLib *mCamera;
+		CameraContext *mCamera;
 };
 
 #endif

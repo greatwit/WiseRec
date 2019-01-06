@@ -6,23 +6,23 @@
 #include "CameraContext.h"
 
 #include "ComDefine.h"
-#define TAG "CameraLib"
+#define TAG "CameraContext"
 
 //namespace android
 //{
 
-	CameraLib* CameraLib::mSelf = NULL;
+	CameraContext* CameraContext::mSelf = NULL;
 
-	CameraLib::CameraLib():mLibHandle(NULL) {
+	CameraContext::CameraContext():mLibHandle(NULL) {
 	    //读取sdk版本
 	    char szSdkVer[32]={0};
 	    __system_property_get("ro.build.version.sdk", szSdkVer);
 	    GLOGW("sdk:%d",atoi(szSdkVer));
 
-	    LoadCameraLib(atoi(szSdkVer));
+	    LoadCameraContext(atoi(szSdkVer));
 	}
 
-	CameraLib::~CameraLib() {
+	CameraContext::~CameraContext() {
 		if(mLibHandle) {
 			dlclose(mLibHandle); // �ر�so���
 			mLibHandle = NULL;
@@ -33,14 +33,14 @@
 		}
 	}
 
-	CameraLib*CameraLib::getInstance()
+	CameraContext*CameraContext::getInstance()
 	{
 		if(mSelf == NULL)
-			mSelf = new CameraLib();
+			mSelf = new CameraContext();
 		return mSelf;
 	}
 
-	bool CameraLib::LoadCameraLib(int version)
+	bool CameraContext::LoadCameraContext(int version)
 	{
 		if(mLibHandle)
 			return false;
@@ -104,7 +104,7 @@
 		return true;
 	}
 	
-	bool CameraLib::ReleaseLib()
+	bool CameraContext::ReleaseLib()
 	{
 		if(mLibHandle) {
 			dlclose(mLibHandle); // �ر�so���

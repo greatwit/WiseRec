@@ -74,4 +74,14 @@ void JNICameraListen::startPreview(const sp<Surface> &surface)
 	}
 }
 
+void JNICameraListen::startPreview_(const ANativeWindow* window) {
+    GLOGW("startPreview_1");
 
+    sp<Surface> surface = NULL;
+    if (window != NULL) {
+        surface = (Surface*) window;
+    }
+    GLOGW("startPreview_2");
+
+    startPreview(surface);
+}

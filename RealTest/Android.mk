@@ -19,7 +19,8 @@ LOCAL_SRC_FILES:= \
 LOCAL_SHARED_LIBRARIES := \
     libandroid_runtime \
     libutils \
-    libc \
+    liblog \
+    libandroid \
     libdl	#libopen
 
 LOCAL_LDLIBS := -llog -landroid
