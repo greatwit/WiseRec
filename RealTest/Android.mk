@@ -10,18 +10,19 @@ CODEC_PATH   = ../Media
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/CameraNative.cpp)) \
-	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/CameraDL.cpp)) \
-	$(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/$(CAMERA_PATH)/CameraContext.cpp))
+	CameraNative.cpp \
+	CameraDL.cpp \
+	$(CAMERA_PATH)/CameraContext.cpp
 	
 
 #JCrypto rely libbinder libmedia
 LOCAL_SHARED_LIBRARIES := \
     libandroid_runtime \
     libutils \
+    libc \
     libdl	#libopen
 
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS := -llog -landroid
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/../common \

@@ -3,23 +3,24 @@
 
 #include <stdlib.h>
 
-#include <gui/Surface.h>
+//#include <gui/Surface.h>
 #include <jni.h>//#include "android_runtime/AndroidRuntime.h"
 
 #include "IVideoCallback.h"
 
-using namespace android;
+//using namespace android;
 
 typedef int CameraSetup_t(IVideoCallback *callback, jint cameraId, jstring clientPackageName);
 typedef int CameraRelease_t();
 typedef void SetCameraParameter_t(jstring params);
 typedef jstring GetCameraParameter_t();
-typedef void StartPreview_t(const sp<Surface> &surface);
+//typedef void StartPreview_t(const sp<Surface> &surface);
+typedef void StartPreview_t(void* window);
 typedef void StopPreview_t();
 typedef void SetDisplayOrientation_t(int value);
 
-namespace android 
-{
+//namespace android
+//{
 
 class CameraLib
 {
@@ -44,6 +45,6 @@ class CameraLib
 		void *mLibHandle;
 };
 
-}
+//}
 
 #endif

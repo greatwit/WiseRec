@@ -5,7 +5,7 @@
 #include "CameraContext.h"
 
 #include <jni.h>
-#include <gui/Surface.h>
+//#include <gui/Surface.h>
 
 class CameraDL : public IVideoCallback
 {
@@ -15,7 +15,8 @@ class CameraDL : public IVideoCallback
 		void CreateCamera(int cameraId, jstring clientPackageName);
 		void SetCameraParameter(jstring params);
 		jstring GetCameraParameter();
-		void StartPreview(const sp<Surface> &surface);
+		//void StartPreview(const sp<Surface> &surface);
+		void StartPreview(void* window);
 		void StopPreview();
 		void CloseCamera();
 

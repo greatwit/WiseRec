@@ -34,8 +34,12 @@
 		return mCamera->GetCameraParameter();
 	}
 
-	void CameraDL::StartPreview(const sp<Surface> &surface) {
-		mCamera->StartPreview(surface);
+//	void CameraDL::StartPreview(const sp<Surface> &surface) {
+//		mCamera->StartPreview(surface);
+//	}
+
+	void CameraDL::StartPreview(void* window) {
+		mCamera->StartPreview(window);
 	}
 
 	void CameraDL::StopPreview() {

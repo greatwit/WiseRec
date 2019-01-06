@@ -8,8 +8,8 @@
 #include "ComDefine.h"
 #define TAG "CameraLib"
 
-namespace android 
-{
+//namespace android
+//{
 
 	CameraLib* CameraLib::mSelf = NULL;
 
@@ -113,6 +113,6 @@ namespace android
 		return mLibHandle==NULL;
 	}
 
-}
+//}
 
 

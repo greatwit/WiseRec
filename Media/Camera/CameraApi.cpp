@@ -43,10 +43,20 @@ jstring GetCameraParameter()
 	return gListenContext->getParameters();
 }
 
-void StartPreview(const sp<Surface> &surface)
-{
-	if(gListenContext != NULL)
+//void StartPreview(const sp<Surface> &surface)
+//{
+//	if(gListenContext != NULL)
+//		gListenContext->startPreview(surface);
+//}
+
+void StartPreview(void* window) {
+	if(gListenContext != NULL) {
+	    sp<Surface> surface = NULL;
+	    if (window != NULL) {
+	        surface = (Surface*) window;
+	    }
 		gListenContext->startPreview(surface);
+	}
 }
 
 void StopPreview()

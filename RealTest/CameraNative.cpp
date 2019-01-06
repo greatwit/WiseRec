@@ -2,7 +2,8 @@
 
 #include <stdio.h>
 #include "CameraDL.h"
-#include "android_runtime/android_view_Surface.h"
+//#include "android_runtime/android_view_Surface.h"
+#include <android/native_window_jni.h>
 
 #include "ComDefine.h"
 #define TAG "CameraNative"
@@ -38,10 +39,11 @@ static jstring GetCameraParameter(JNIEnv *env, jobject) {
 	return gCamera->GetCameraParameter();
 }
 
-static void StartPreview(JNIEnv *env, jobject, jobject jsurface) {
-	if(jsurface!=NULL) {
-		sp<Surface> surface(android_view_Surface_getSurface(env, jsurface));
-		gCamera->StartPreview(surface);
+static void StartPreview(JNIEnv *env, jobject, jobject surface) {
+	if(surface!=NULL) {
+		//sp<Surface> surface(android_view_Surface_getSurface(env, surface));
+		ANativeWindow *pAnw = ANativeWindow_fromSurface(env, surface);
+		gCamera->StartPreview(pAnw);
 	}
 }
 
