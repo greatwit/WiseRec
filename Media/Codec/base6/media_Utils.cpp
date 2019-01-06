@@ -28,54 +28,54 @@
 
 namespace android {
 
-bool ConvertKeyValueArraysToKeyedVector(
-        JNIEnv *env, jobjectArray keys, jobjectArray values,
-        KeyedVector<String8, String8>* keyedVector) {
-
-    int nKeyValuePairs = 0;
-    bool failed = false;
-    if (keys != NULL && values != NULL) {
-        nKeyValuePairs = env->GetArrayLength(keys);
-        failed = (nKeyValuePairs != env->GetArrayLength(values));
-    }
-
-    if (!failed) {
-        failed = ((keys != NULL && values == NULL) ||
-                  (keys == NULL && values != NULL));
-    }
-
-    if (failed) {
-        ALOGE("keys and values arrays have different length");
-        jniThrowException(env, "java/lang/IllegalArgumentException", NULL);
-        return false;
-    }
-
-    for (int i = 0; i < nKeyValuePairs; ++i) {
-        // No need to check on the ArrayIndexOutOfBoundsException, since
-        // it won't happen here.
-        jstring key = (jstring) env->GetObjectArrayElement(keys, i);
-        jstring value = (jstring) env->GetObjectArrayElement(values, i);
-
-        const char* keyStr = env->GetStringUTFChars(key, NULL);
-        if (!keyStr) {  // OutOfMemoryError
-            return false;
-        }
-
-        const char* valueStr = env->GetStringUTFChars(value, NULL);
-        if (!valueStr) {  // OutOfMemoryError
-            env->ReleaseStringUTFChars(key, keyStr);
-            return false;
-        }
-
-        keyedVector->add(String8(keyStr), String8(valueStr));
-
-        env->ReleaseStringUTFChars(key, keyStr);
-        env->ReleaseStringUTFChars(value, valueStr);
-        env->DeleteLocalRef(key);
-        env->DeleteLocalRef(value);
-    }
-    return true;
-}
+//bool ConvertKeyValueArraysToKeyedVector(
+//        JNIEnv *env, jobjectArray keys, jobjectArray values,
+//        KeyedVector<String8, String8>* keyedVector) {
+//
+//    int nKeyValuePairs = 0;
+//    bool failed = false;
+//    if (keys != NULL && values != NULL) {
+//        nKeyValuePairs = env->GetArrayLength(keys);
+//        failed = (nKeyValuePairs != env->GetArrayLength(values));
+//    }
+//
+//    if (!failed) {
+//        failed = ((keys != NULL && values == NULL) ||
+//                  (keys == NULL && values != NULL));
+//    }
+//
+//    if (failed) {
+//        ALOGE("keys and values arrays have different length");
+//        jniThrowException(env, "java/lang/IllegalArgumentException", NULL);
+//        return false;
+//    }
+//
+//    for (int i = 0; i < nKeyValuePairs; ++i) {
+//        // No need to check on the ArrayIndexOutOfBoundsException, since
+//        // it won't happen here.
+//        jstring key = (jstring) env->GetObjectArrayElement(keys, i);
+//        jstring value = (jstring) env->GetObjectArrayElement(values, i);
+//
+//        const char* keyStr = env->GetStringUTFChars(key, NULL);
+//        if (!keyStr) {  // OutOfMemoryError
+//            return false;
+//        }
+//
+//        const char* valueStr = env->GetStringUTFChars(value, NULL);
+//        if (!valueStr) {  // OutOfMemoryError
+//            env->ReleaseStringUTFChars(key, keyStr);
+//            return false;
+//        }
+//
+//        keyedVector->add(String8(keyStr), String8(valueStr));
+//
+//        env->ReleaseStringUTFChars(key, keyStr);
+//        env->ReleaseStringUTFChars(value, valueStr);
+//        env->DeleteLocalRef(key);
+//        env->DeleteLocalRef(value);
+//    }
+//    return true;
+//}
 
 static jobject makeIntegerObject(JNIEnv *env, int32_t value) {
     ScopedLocalRef<jclass> clazz(env, env->FindClass("java/lang/Integer"));

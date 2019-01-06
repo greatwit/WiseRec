@@ -1,18 +1,18 @@
 
-#include "CameraDL.h"
+#include "CameraStub.h"
 
 #include "ComDefine.h"
-#define TAG "CameraDL"
+#define TAG "CameraStub"
 
-	CameraDL::CameraDL() {
+	CameraStub::CameraStub() {
 		mCamera = CameraContext::getInstance();
 	}
 
-	CameraDL::~CameraDL() {
+	CameraStub::~CameraStub() {
 		CloseCamera();
 	}
 
-	void CameraDL::CreateCamera(int cameraId, jstring clientPackageName) {
+	void CameraStub::CreateCamera(int cameraId, jstring clientPackageName) {
 		if(mCamera) {
 			//JNIEnv *env = AndroidRuntime::getJNIEnv();
 			//jstring clientPackageName = env->NewStringUTF(packName);
@@ -26,27 +26,27 @@
 			GLOGE("function %s,line:%d LoadCameraContext failed.", __FUNCTION__, __LINE__);
 	}
 
-	void CameraDL::SetCameraParameter(jstring params) {
+	void CameraStub::SetCameraParameter(jstring params) {
 		mCamera->SetCameraParameter(params);
 	}
 
-	jstring CameraDL::GetCameraParameter() {
+	jstring CameraStub::GetCameraParameter() {
 		return mCamera->GetCameraParameter();
 	}
 
-//	void CameraDL::StartPreview(const sp<Surface> &surface) {
+//	void CameraStub::StartPreview(const sp<Surface> &surface) {
 //		mCamera->StartPreview(surface);
 //	}
 
-	void CameraDL::StartPreview(void* window) {
+	void CameraStub::StartPreview(void* window) {
 		mCamera->StartPreview(window);
 	}
 
-	void CameraDL::StopPreview() {
+	void CameraStub::StopPreview() {
 		mCamera->StopPreview();
 	}
 
-	void CameraDL::CloseCamera() {
+	void CameraStub::CloseCamera() {
 		if(mCamera) {
 			mCamera->ReleaseLib();
 			delete mCamera;
@@ -54,7 +54,7 @@
 		}
 	}
 
-	void CameraDL::VideoSource(VideoFrame *pBuf) {
+	void CameraStub::VideoSource(VideoFrame *pBuf) {
 		if(pBuf)
 			GLOGI("video length:%d", pBuf->length);
 	}

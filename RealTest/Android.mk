@@ -11,7 +11,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
 	CameraNative.cpp \
-	CameraDL.cpp \
+	CameraStub.cpp \
 	$(CAMERA_PATH)/CameraContext.cpp
 	
 

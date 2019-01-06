@@ -15,9 +15,9 @@ namespace android {
 /**
  * Returns true if the conversion is successful; otherwise, false.
  */
-bool ConvertKeyValueArraysToKeyedVector(
-    JNIEnv *env, jobjectArray keys, jobjectArray values,
-    KeyedVector<String8, String8>* vector);
+//bool ConvertKeyValueArraysToKeyedVector(
+//    JNIEnv *env, jobjectArray keys, jobjectArray values,
+//    KeyedVector<String8, String8>* vector);
 
 struct AMessage;
 status_t ConvertMessageToMap(

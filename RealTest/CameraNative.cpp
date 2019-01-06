@@ -1,7 +1,7 @@
 
 
 #include <stdio.h>
-#include "CameraDL.h"
+#include "CameraStub.h"
 //#include "android_runtime/android_view_Surface.h"
 #include <android/native_window_jni.h>
 
@@ -10,12 +10,12 @@
 
 #define CLASS_PATH	"com/wise/mediarec/Recorder/NativeCamera"
 
-CameraDL *gCamera = NULL;
+CameraStub *gCamera = NULL;
 
 static jboolean OpenCamera(JNIEnv *env, jobject, jint cameraId, jstring clientName)
 {
 	if(!gCamera)
-		gCamera = new CameraDL();
+		gCamera = new CameraStub();
 	gCamera->CreateCamera(cameraId, clientName);
 
 	return true;

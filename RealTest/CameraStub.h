@@ -1,16 +1,16 @@
-#ifndef _CAMERA_DL_H_
-#define _CAMERA_DL_H_
+#ifndef _CAMERA_STUB_H_
+#define _CAMERA_STUB_H_
 
 #include "IVideoCallback.h"
 #include "CameraContext.h"
 
 #include <jni.h>
 
-class CameraDL : public IVideoCallback
+class CameraStub : public IVideoCallback
 {
 	public:
-		CameraDL();
-		virtual ~CameraDL();
+		CameraStub();
+		virtual ~CameraStub();
 		void CreateCamera(int cameraId, jstring clientPackageName);
 		void SetCameraParameter(jstring params);
 		jstring GetCameraParameter();
