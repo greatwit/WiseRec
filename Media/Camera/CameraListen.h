@@ -42,6 +42,7 @@ class JNICameraListen: public CameraListener
 		void setParameters(jstring params);
 		jstring getParameters();
 		void startPreview(const sp<Surface> &surface);
+		void startPreview_(const ANativeWindow* window);
 		void stopPreview();
 		void setDisplayOrientation(jint value);
 

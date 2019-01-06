@@ -19,7 +19,7 @@ extern "C"
 	void SetCameraParameter(jstring params);
 	jstring GetCameraParameter();
 	//void StartPreview(const sp<Surface> &surface);
-	void StartPreview(void* window);
+	void StartPreview(const void* window);
 	void StopPreview();
 	void SetDisplayOrientation(int value);
 

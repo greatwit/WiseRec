@@ -111,6 +111,6 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 
 	GLOGW( "loading . . .2");
 
-	return JNI_OK;
+	return JNI_VERSION_1_6;
 }
 

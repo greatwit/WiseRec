@@ -2,6 +2,8 @@
 
 #include "CameraListen.h"
 
+#include "ComDefine.h"
+
 #include "CameraApi.h"
 #define TAG "CameraApi"
 
@@ -13,7 +15,6 @@ sp<JNICameraListen> gListenContext = NULL;
 
 int CameraSetup(IVideoCallback *callback, jint cameraId, jstring clientPackageName)
 {
-
 	if(gListenContext == NULL)
 		gListenContext = new JNICameraListen(callback);
 	
@@ -49,13 +50,11 @@ jstring GetCameraParameter()
 //		gListenContext->startPreview(surface);
 //}
 
-void StartPreview(void* window) {
+void StartPreview(const void* window) {
 	if(gListenContext != NULL) {
-	    sp<Surface> surface = NULL;
-	    if (window != NULL) {
-	        surface = (Surface*) window;
-	    }
-		gListenContext->startPreview(surface);
+		//GLOGW("function %s,line:%d StartPreview 1",__FUNCTION__,__LINE__);
+		gListenContext->startPreview_((const ANativeWindow*)window);
+		GLOGW("function %s,line:%d StartPreview ",__FUNCTION__,__LINE__);
 	}
 }
 

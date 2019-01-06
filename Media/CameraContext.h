@@ -15,7 +15,7 @@ typedef int CameraRelease_t();
 typedef void SetCameraParameter_t(jstring params);
 typedef jstring GetCameraParameter_t();
 //typedef void StartPreview_t(const sp<Surface> &surface);
-typedef void StartPreview_t(void* window);
+typedef void StartPreview_t(const void* window);
 typedef void StopPreview_t();
 typedef void SetDisplayOrientation_t(int value);
 

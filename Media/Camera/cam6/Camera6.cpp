@@ -72,4 +72,19 @@ void JNICameraListen::startPreview(const sp<Surface> &surface)
         GLOGE( "startPreview failed");
 }
 
+void JNICameraListen::startPreview_(const ANativeWindow* window) {
+    GLOGW("startPreview_1");
+
+    sp<Surface> surface = NULL;
+    if (window != NULL) {
+        surface = (Surface*) window;
+    }
+    GLOGW("startPreview_2");
+	if(surface!=NULL && mCamera != NULL)
+		if (mCamera->setPreviewTarget(surface->getIGraphicBufferProducer()) != NO_ERROR)
+			GLOGE("Camera setPreviewDisplay failed");
+
+    if (mCamera->startPreview() != NO_ERROR)
+        GLOGE( "startPreview failed");
+}
 
