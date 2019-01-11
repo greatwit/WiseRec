@@ -1,24 +1,20 @@
-#include "CodecContext.h"
 
 #include<dlfcn.h>
-
 #include <utils/Log.h>
+#include "CodecContext.h"
 
-
-
-#define TAG "CodecBaseLib"
+#include "ComDefine.h"
+#define TAG "CodecContext"
 
 namespace android 
 {
-
-	CodecBaseLib* CodecBaseLib::mSelf = NULL;
-
-	CodecBaseLib::CodecBaseLib():mLibHandle(NULL)
+	CodecContext* CodecContext::mSelf = NULL;
+	CodecContext::CodecContext():mLibHandle(NULL)
 	{
 		
 	}
 
-	CodecBaseLib::~CodecBaseLib()
+	CodecContext::~CodecContext()
 	{
 		if(mLibHandle)
 		{
@@ -27,14 +23,14 @@ namespace android
 		}
 	}
 
-	CodecBaseLib*CodecBaseLib::getInstance()
+	CodecContext*CodecContext::getInstance()
 	{
 		if(mSelf == NULL)
-			mSelf = new CodecBaseLib();
+			mSelf = new CodecContext();
 		return mSelf;
 	}
 
-	bool CodecBaseLib::LoadBaseLib(int version)
+	bool CodecContext::LoadBaseLib(int version)
 	{
 		if(mLibHandle)
 			return false;
@@ -73,9 +69,8 @@ namespace android
 					break;
 			}
 			
-			if (!mLibHandle) 
-			{
-				ALOGE("Error: load so  failed.\n");
+			if (!mLibHandle) {
+				GLOGE("Error: load so  failed.\n");
 			}
 			dlerror(); // ��մ�����Ϣ
 		
@@ -90,19 +85,16 @@ namespace android
 		CodecDestroy 				= (CodecDestroy_t*)dlsym(mLibHandle, "CodecDestroy");
 		ConvertKeyValueToMessage 	= (ConvertKeyValueToMessage_t*)dlsym(mLibHandle, "ConvertKeyValueToMessage");
 		
-		
 		const char *err = dlerror();
-		if (NULL != err) 
-		{
-			ALOGE("dlsym stderr:%s\n", err);
+		if (NULL != err) {
+			GLOGE("dlsym stderr:%s\n", err);
 			return false;
 		}
 
-		ALOGE("testAdd 57 + 3 = %d\n", testAdd(57, 3)); // ���ú���
+		GLOGE("testAdd 57 + 3 = %d\n", testAdd(57, 3)); // ���ú���
 			
 		return mLibHandle!=NULL;
 	}
 
 }
-
 

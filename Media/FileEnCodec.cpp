@@ -43,8 +43,8 @@ bool FileEnCodec::CreateCodec( const sp<AMessage> &format, const sp<Surface> &su
 	//mCodec = new CodecBase("video/avc", true, true);
 	//mCodec->CreateCodec(format, surface, crypto, flags);
 	//mCodec->registerBufferCall(this);
-	CodecBaseLib::getInstance()->CodecCreate(format, surface, crypto, flags, true);
-	CodecBaseLib::getInstance()->RegisterBufferCall(this);
+	CodecContext::getInstance()->CodecCreate(format, surface, crypto, flags, true);
+	CodecContext::getInstance()->RegisterBufferCall(this);
 	
 	return true;
 }
@@ -63,7 +63,7 @@ bool FileEnCodec::DeInit()
 bool FileEnCodec::StartVideo(int deivceid)
 {
 	//mCodec->startCodec();
-	CodecBaseLib::getInstance()->StartCodec();
+	CodecContext::getInstance()->StartCodec();
 
 	GLOGD("function %s,line:%d",__FUNCTION__,__LINE__);
 
@@ -75,7 +75,7 @@ bool FileEnCodec::StopVideo()
 	GLOGW("function %s,line:%d StopVideo 0",__FUNCTION__,__LINE__);
 
 	//mCodec->stopCodec();
-	CodecBaseLib::getInstance()->StopCodec();
+	CodecContext::getInstance()->StopCodec();
 	
 	GLOGD("function %s,line:%d StopVideo 2",__FUNCTION__,__LINE__);
 
@@ -95,7 +95,7 @@ void FileEnCodec::onCodecBuffer(struct CodecBuffer& buff)
 void FileEnCodec::AddDecodecSource(char *data, int len)
 {
 	//mCodec->addBuffer(data, len);
-	CodecBaseLib::getInstance()->AddBuffer(data, len);
+	CodecContext::getInstance()->AddBuffer(data, len);
 }
 
 

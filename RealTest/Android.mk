@@ -2,6 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 
 CAMERA_PATH  = ../Media
 CODEC_PATH   = ../Media
+COMMON_PATH  = ../common
 
 ##################################################
 ###                 camera lib                 ###
@@ -37,3 +38,42 @@ LOCAL_C_INCLUDES += \
 LOCAL_MODULE:= libNativeCamera
 
 include $(BUILD_SHARED_LIBRARY)
+
+##################################################
+###                 codec lib                  ###
+##################################################
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES:= \
+	CodecNative.cpp \
+	CodecStub.cpp \
+		$(COMMON_PATH)/gthreadpool.cpp \
+	$(CAMERA_PATH)/CodecContext.cpp
+	
+
+#JCrypto rely libbinder libmedia
+LOCAL_SHARED_LIBRARIES := \
+    libandroid_runtime \
+    libutils \
+    liblog \
+    libandroid \
+    libdl	#libopen
+
+LOCAL_LDLIBS := -llog -landroid
+
+LOCAL_C_INCLUDES += \
+    $(LOCAL_PATH)/../common \
+    $(LOCAL_PATH)/../Media \
+    $(LOCAL_PATH)/../Media/Camera \
+    $(call include-path-for, libhardware)/hardware
+
+#for test
+#$(warning $(LOCAL_PATH))
+
+LOCAL_MODULE:= libNativeCodec
+
+include $(BUILD_SHARED_LIBRARY)
+
+
+

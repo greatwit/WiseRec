@@ -45,14 +45,14 @@ namespace android
 struct AMessage;
 struct ICrypto;
 
-class CodecBaseLib
+class CodecContext
 {
 	public:
-		CodecBaseLib();
-		~CodecBaseLib();
+		CodecContext();
+		~CodecContext();
 		bool LoadBaseLib(int version);
 		
-		static CodecBaseLib*getInstance();
+		static CodecContext*getInstance();
 		
 		CodecCreate_t*				CodecCreate;
 		RegisterBufferCall_t*		RegisterBufferCall;
@@ -65,7 +65,7 @@ class CodecBaseLib
 		test_t* 		testAdd;
 		
 	private:
-		static CodecBaseLib*mSelf;
+		static CodecContext*mSelf;
 		void *mLibHandle;
 };
 

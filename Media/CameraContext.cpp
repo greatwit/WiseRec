@@ -70,6 +70,7 @@
 					
 				case 24:		//7.0
 				case 25:		//7.1.1/7.1
+					mLibHandle = dlopen("libCamera6.so", RTLD_LAZY); // ����.so�ļ� RTLD_LAZY
 					break;
 					
 				case 26:		//8.0 O

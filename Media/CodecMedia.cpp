@@ -61,10 +61,10 @@ static jboolean StartFileEncoder(JNIEnv *env, jobject,
 	char szSdkVer[32]={0};
 	__system_property_get("ro.build.version.sdk", szSdkVer);
 	GLOGI("sdk:%d",atoi(szSdkVer));
-	CodecBaseLib::getInstance()->LoadBaseLib(atoi(szSdkVer));
+	CodecContext::getInstance()->LoadBaseLib(atoi(szSdkVer));
 	
 	sp<AMessage> format;
-	status_t err = CodecBaseLib::getInstance()->ConvertKeyValueToMessage(env, keys, values, &format);//ConvertKeyValueArraysToMessage(env, keys, values, &format);
+	status_t err = CodecContext::getInstance()->ConvertKeyValueToMessage(env, keys, values, &format);//ConvertKeyValueArraysToMessage(env, keys, values, &format);
 
 	sp<ICrypto> crypto;
 	if (jcrypto != NULL) {
@@ -124,10 +124,10 @@ static jboolean StartCameraEncodec(JNIEnv *env, jobject thiz,
 		char szSdkVer[32]={0};
 		__system_property_get("ro.build.version.sdk", szSdkVer);
 		GLOGI("sdk:%d",atoi(szSdkVer));
-		CodecBaseLib::getInstance()->LoadBaseLib(atoi(szSdkVer));
+		CodecContext::getInstance()->LoadBaseLib(atoi(szSdkVer));
 
 		sp<AMessage> format;
-		status_t err = CodecBaseLib::getInstance()->ConvertKeyValueToMessage(env, keys, values, &format);//ConvertKeyValueArraysToMessage(env, keys, values, &format);
+		status_t err = CodecContext::getInstance()->ConvertKeyValueToMessage(env, keys, values, &format);//ConvertKeyValueArraysToMessage(env, keys, values, &format);
 
 		sp<ICrypto> crypto;
 
@@ -208,7 +208,7 @@ static jboolean StopCameraEncodec(JNIEnv *env, jobject) {
 
 static jboolean LoadBaseLib(JNIEnv *env, jobject obj, int version)
 {
-	return CodecBaseLib::getInstance()->LoadBaseLib(version);
+	return CodecContext::getInstance()->LoadBaseLib(version);
 }
 
 #ifdef __cplusplus
