@@ -13,24 +13,27 @@ class CodecStub : public ICodecCallback
 	public:
 		CodecStub();
 		virtual ~CodecStub();
-		bool CreateCodec(const sp<AMessage> &format, const sp<Surface> &surface, int flags, char*filename);
+		int  ConvertKeyValueToMessage(JNIEnv *env, jobjectArray keys, jobjectArray values, sp<AMessage> *format);
 
+		bool CreateCodec(const sp<AMessage> &format, ANativeWindow *window, int flags,  const char*readFile, const char*writeFile);
 		bool CloseCodec();
 
-		bool StartVideo(int deivceid);
+	private:
+		bool StartVideo();
 		bool StopVideo();
 
-		int  ConvertKeyValueToMessage_t(JNIEnv *env, jobjectArray keys, jobjectArray values, sp<AMessage> *msg);
-
 		void AddDecodecSource(char *data, int len);
+		void AddDecodecSource();
 		void onCodecBuffer(struct CodecBuffer& buff);
 
-	private:
 		static void demuxFunc( void *arg );
 
 	private:
-		CodecContext *mCodec;
+		CodecContext 	*mCodec;
 		GThreadPool 	mPool;
+
+		FILE 			*mrFile;
+		FILE 			*mwFile;
 };
 
 #endif

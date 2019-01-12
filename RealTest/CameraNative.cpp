@@ -8,7 +8,7 @@
 #include "ComDefine.h"
 #define TAG "CameraNative"
 
-#define CLASS_PATH	"com/wise/mediarec/Recorder/NativeCamera"
+#define CLASS_PATH	"com/great/happyness/medialib/NativeCamera"
 
 CameraStub *gCamera = NULL;
 

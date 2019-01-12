@@ -48,7 +48,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES:= \
 	CodecNative.cpp \
 	CodecStub.cpp \
-		$(COMMON_PATH)/gthreadpool.cpp \
+	$(COMMON_PATH)/gthreadpool.cpp \
 	$(CAMERA_PATH)/CodecContext.cpp
 	
 

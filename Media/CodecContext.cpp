@@ -1,6 +1,7 @@
 
 #include<dlfcn.h>
 #include <utils/Log.h>
+#include <sys/system_properties.h>
 #include "CodecContext.h"
 
 #include "ComDefine.h"
@@ -11,7 +12,12 @@ namespace android
 	CodecContext* CodecContext::mSelf = NULL;
 	CodecContext::CodecContext():mLibHandle(NULL)
 	{
-		
+	    //读取sdk版本
+	    char szSdkVer[32]={0};
+	    __system_property_get("ro.build.version.sdk", szSdkVer);
+	    GLOGW("sdk:%d",atoi(szSdkVer));
+
+	    LoadBaseLib(atoi(szSdkVer));
 	}
 
 	CodecContext::~CodecContext()

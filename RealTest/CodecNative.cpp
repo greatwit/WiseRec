@@ -6,57 +6,52 @@
 #include <android/native_window_jni.h>
 
 #include "ComDefine.h"
-#define TAG "CameraNative"
+#define TAG "CodecNative"
 
-#define CLASS_PATH	"com/wise/mediarec/Recorder/NativeCodec"
+#define CLASS_PATH	"com/great/happyness/medialib/NativeCodec"
 
 CodecStub *gCodec = NULL;
 
-static jboolean OpenCamera(JNIEnv *env, jobject, jint cameraId, jstring clientName)
+static jboolean StartEncoderTest(JNIEnv *env, jobject,
+										jobjectArray keys, jobjectArray values,
+										jobject jsurface,
+										jint flags,
+										jstring readpath,
+										jstring writepath)
 {
-	if(!gCodec)
+	if(!gCodec) {
 		gCodec = new CodecStub();
-	//gCamera->CreateCamera(cameraId, clientName);
 
+		sp<AMessage> format;
+		GLOGW("StartEncoderTest 1\n");
+		status_t err = CodecContext::getInstance()->ConvertKeyValueToMessage(env, keys, values, &format);
+		GLOGW("StartEncoderTest 2\n");
+		ANativeWindow *pAnw = ANativeWindow_fromSurface(env, jsurface);
+		const char *readfile = env->GetStringUTFChars(readpath, NULL);
+		const char *writefile = env->GetStringUTFChars(writepath, NULL);
+		gCodec->CreateCodec(format, pAnw, flags, readfile, writefile);
+		GLOGW("StartEncoderTest readfile:%s\n", readfile);
+		env->ReleaseStringUTFChars(readpath, readfile);
+		env->ReleaseStringUTFChars(writepath, writefile);
+
+	}
 	return true;
 }
 
-static jboolean CloseCamera(JNIEnv *env, jobject) {
+static jboolean StopEncoderTest(JNIEnv *env, jobject) {
 	if(gCodec) {
-		//gCodec->CloseCamera();
+		gCodec->CloseCodec();
 		delete gCodec;
 		gCodec = NULL;
 	}
-
 	return true;
 }
 
-static void SetCameraParameter(JNIEnv *env, jobject, jstring params) {
-	//gCamera->SetCameraParameter(params);
-}
-
-
-static void StartPreview(JNIEnv *env, jobject, jobject surface) {
-	if(surface!=NULL) {
-		//sp<Surface> surface(android_view_Surface_getSurface(env, surface));
-		ANativeWindow *pAnw = ANativeWindow_fromSurface(env, surface);
-		//gCamera->StartPreview(pAnw);
-	}
-}
-
-static void StopPreview(JNIEnv *env, jobject) {
-	//gCamera->StopPreview();
-}
-
-
 static JNINativeMethod gMethods[] =
 {
-		{ "OpenCamera", "(ILjava/lang/String;)Z", (void *)OpenCamera },
-		{ "CloseCamera", "()Z", (void *)CloseCamera },
-		{ "SetCameraParameter", "(Ljava/lang/String;)V", (void *)SetCameraParameter },
-		//{ "GetCameraParameter", "()Ljava/lang/String;", (void *)GetCameraParameter },
-		{ "StartPreview", "(Landroid/view/Surface;)V", (void *)StartPreview },
-		{ "StopPreview", "()V", (void *)StopPreview },
+		{ "StartEncoderTest", "([Ljava/lang/String;[Ljava/lang/Object;Landroid/view/Surface;"
+						"ILjava/lang/String;Ljava/lang/String;)Z", (void *)StartEncoderTest },
+		{ "StopEncoderTest", "()Z", (void *)StopEncoderTest },
 };
 
 int jniRegisterNativeMethods1(JNIEnv* env, const char* className,
