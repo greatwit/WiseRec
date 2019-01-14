@@ -15,18 +15,20 @@ class CodecStub : public ICodecCallback
 		virtual ~CodecStub();
 		int  ConvertKeyValueToMessage(JNIEnv *env, jobjectArray keys, jobjectArray values, sp<AMessage> *format);
 
-		bool CreateCodec(const sp<AMessage> &format, ANativeWindow *window, int flags,  const char*readFile, const char*writeFile);
+		bool CreateEncodec(const sp<AMessage> &format, ANativeWindow *window, int flags,  const char*readFile, const char*writeFile);
+		bool CreateDecodec(const sp<AMessage> &format, ANativeWindow *window, int flags,  const char*readFile);
 		bool CloseCodec();
 
 	private:
-		bool StartVideo();
+		bool StartVideo(bool encodec);
 		bool StopVideo();
 
-		void AddDecodecSource(char *data, int len);
 		void AddDecodecSource();
+		void AddEncodecSource();
 		void onCodecBuffer(struct CodecBuffer& buff);
 
-		static void demuxFunc( void *arg );
+		static void encodecFunc( void *arg );
+		static void decodecFunc( void *arg );
 
 	private:
 		CodecContext 	*mCodec;

@@ -3,6 +3,7 @@ LOCAL_PATH:= $(call my-dir)
 CAMERA_PATH  = ../Media
 CODEC_PATH   = ../Media
 COMMON_PATH  = ../common
+NALDECODER	 = ../common/NalBareflow
 
 ##################################################
 ###                 camera lib                 ###
@@ -49,7 +50,8 @@ LOCAL_SRC_FILES:= \
 	CodecNative.cpp \
 	CodecStub.cpp \
 	$(COMMON_PATH)/gthreadpool.cpp \
-	$(CAMERA_PATH)/CodecContext.cpp
+	$(CAMERA_PATH)/CodecContext.cpp \
+	$(NALDECODER)/NALDecoder.cpp
 	
 
 #JCrypto rely libbinder libmedia
@@ -64,6 +66,7 @@ LOCAL_LDLIBS := -llog -landroid
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/../common \
+    $(LOCAL_PATH)/$(NALDECODER) \
     $(LOCAL_PATH)/../Media \
     $(LOCAL_PATH)/../Media/Camera \
     $(call include-path-for, libhardware)/hardware

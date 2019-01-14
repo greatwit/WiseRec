@@ -1,7 +1,8 @@
 
 #include "CodecStub.h"
-
+#include "NALDecoder.h"
 #include "ComDefine.h"
+
 #define TAG "CodecStub"
 
 #define WIDTH 1280
@@ -23,7 +24,7 @@
 				fclose(mwFile);
 		}
 
-		bool CodecStub::CreateCodec(const sp<AMessage> &format, ANativeWindow *window, int flags, const char*readFile, const char*writeFile) {
+		bool CodecStub::CreateEncodec(const sp<AMessage> &format, ANativeWindow *window, int flags, const char*readFile, const char*writeFile) {
 
 			sp<ICrypto> crypto;
 		    sp<Surface> surface = NULL;
@@ -36,7 +37,23 @@
 			mrFile = fopen(readFile, "rb");
 			mwFile = fopen(writeFile, "wb");
 
-			StartVideo();
+			StartVideo(true);
+
+			return true;
+		}
+
+		bool CodecStub::CreateDecodec(const sp<AMessage> &format, ANativeWindow *window, int flags,  const char*readFile) {
+			sp<ICrypto> crypto;
+		    sp<Surface> surface = NULL;
+		    if (window != NULL) {
+		        surface = (Surface*) window;
+		    }
+			mCodec->CodecCreate(format, surface, crypto, flags, false);	//true is decodec
+			mCodec->RegisterBufferCall(this);
+
+			mrFile =  OpenBitstreamFile( readFile );
+
+			StartVideo(false);
 
 			return true;
 		}
@@ -46,9 +63,9 @@
 			return true;
 		}
 
-		bool CodecStub::StartVideo() {
+		bool CodecStub::StartVideo(bool encodec) {
 			mCodec->StartCodec();
-			mPool.dispatch( demuxFunc, this );
+			(encodec==true)?mPool.dispatch( encodecFunc, this ):mPool.dispatch( decodecFunc, this );
 			return true;
 		}
 
@@ -62,12 +79,17 @@
 			return 0;
 		}
 
-		void CodecStub::demuxFunc( void *arg ) {
+		void CodecStub::encodecFunc( void *arg ) {
+			CodecStub* context = (CodecStub*)arg;
+			context->AddEncodecSource();
+		}
+
+		void CodecStub::decodecFunc( void *arg ) {
 			CodecStub* context = (CodecStub*)arg;
 			context->AddDecodecSource();
 		}
 
-		void CodecStub::AddDecodecSource() {
+		void CodecStub::AddEncodecSource() {
 			int yuvLen = WIDTH*HEIGHT*3/2;
 			char *data = new char[yuvLen];
 			while(true) {
@@ -81,12 +103,32 @@
 			delete[]data;
 		}
 
-		void CodecStub::AddDecodecSource(char *data, int len) {
+		void CodecStub::AddDecodecSource() {
+			int yuvLen = WIDTH*HEIGHT*3/2;
+			NALU_t *data = AllocNALU(yuvLen);
+			int count = 0;
+			do{
+				count++;
+				int size=GetAnnexbNALU(mrFile, data);//每执行一次，文件的指针指向本次找到的NALU的末尾，下一个位置即为下个NALU的起始码0x000001
+				GLOGE("GetAnnexbNALU type:0x%02X size:%d count:%d\n", data->buf[0], size, count);
+				if(size<4) {
+					GLOGE("get nul error!\n");
+					continue;
+				}else if(size<=0)break;
+					else
+						mCodec->AddBuffer((char*)data->buf, size);
+
+				usleep(500*1000);
+			}while(!feof(mrFile));
+
+			FreeNALU(data);
 		}
 
 		void CodecStub::onCodecBuffer(struct CodecBuffer& buff) {
 			int size = buff.size;
-			fwrite(buff.buf, size, 1, mwFile);
+			if(mwFile)
+				fwrite(buff.buf, size, 1, mwFile);
+			GLOGI("onCodecBuffer size:%d", size);
 		}
 
 

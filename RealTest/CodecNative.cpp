@@ -29,7 +29,7 @@ static jboolean StartEncoderTest(JNIEnv *env, jobject,
 		ANativeWindow *pAnw = ANativeWindow_fromSurface(env, jsurface);
 		const char *readfile = env->GetStringUTFChars(readpath, NULL);
 		const char *writefile = env->GetStringUTFChars(writepath, NULL);
-		gCodec->CreateCodec(format, pAnw, flags, readfile, writefile);
+		gCodec->CreateEncodec(format, pAnw, flags, readfile, writefile);
 		GLOGW("StartEncoderTest readfile:%s\n", readfile);
 		env->ReleaseStringUTFChars(readpath, readfile);
 		env->ReleaseStringUTFChars(writepath, writefile);
@@ -47,11 +47,46 @@ static jboolean StopEncoderTest(JNIEnv *env, jobject) {
 	return true;
 }
 
+static jboolean StartDecoderTest(JNIEnv *env, jobject,
+										jobjectArray keys, jobjectArray values,
+										jobject jsurface,
+										jint flags,
+										jstring readpath)
+{
+	if(!gCodec) {
+		gCodec = new CodecStub();
+
+		sp<AMessage> format;
+		GLOGW("StartDecoderTest 1\n");
+		status_t err = CodecContext::getInstance()->ConvertKeyValueToMessage(env, keys, values, &format);
+		GLOGW("StartDecoderTest 2\n");
+		ANativeWindow *pAnw = ANativeWindow_fromSurface(env, jsurface);
+		const char *readfile = env->GetStringUTFChars(readpath, NULL);
+		gCodec->CreateDecodec(format, pAnw, flags, readfile);
+		GLOGW("StartDecoderTest readfile:%s\n", readfile);
+		env->ReleaseStringUTFChars(readpath, readfile);
+
+	}
+	return true;
+}
+
+static jboolean StopDecoderTest(JNIEnv *env, jobject) {
+	if(gCodec) {
+		gCodec->CloseCodec();
+		delete gCodec;
+		gCodec = NULL;
+	}
+	return true;
+}
+
 static JNINativeMethod gMethods[] =
 {
 		{ "StartEncoderTest", "([Ljava/lang/String;[Ljava/lang/Object;Landroid/view/Surface;"
 						"ILjava/lang/String;Ljava/lang/String;)Z", (void *)StartEncoderTest },
 		{ "StopEncoderTest", "()Z", (void *)StopEncoderTest },
+		{ "StartDecoderTest", "([Ljava/lang/String;[Ljava/lang/Object;Landroid/view/Surface;"
+						"ILjava/lang/String;)Z", (void *)StartDecoderTest },
+		{ "StopDecoderTest", "()Z", (void *)StopDecoderTest },
 };
 
 int jniRegisterNativeMethods1(JNIEnv* env, const char* className,
