@@ -6,10 +6,10 @@
 
 #include "mediaextrator.h"
 
-class GMediaExtractor  : private GThread
+class GMediaExtractor : private GThread
 {
 	public:
-	GMediaExtractor();
+		GMediaExtractor();
 		virtual ~GMediaExtractor();
 		int startPlayer(const char*filepath, void *surface);
 		int stopPlayer();

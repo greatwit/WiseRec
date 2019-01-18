@@ -39,11 +39,20 @@ LOCAL_C_INCLUDES += \
 					$(LOCAL_PROJECT_ROOT)/../common \
 					$(LOCAL_PROJECT_ROOT)/$(FFMPEG_PATH) \
 					$(LOCAL_PROJECT_ROOT)/$(FFMPEG_PATH)/include \
-					$(LOCAL_PROJECT_ROOT)/$(THREAD_PATH)
+					$(LOCAL_PROJECT_ROOT)/$(THREAD_PATH) \
+					$(LOCAL_PROJECT_ROOT)/$(NAREFL_PATH)
 
 #LOCAL_SRC_FILES := mediacodec_ndk.c FileDeCodecJni.cpp $(FFMPEG_PATH)/FfmpegContext.cpp $(THREAD_PATH)/gthreadpool.cpp
-LOCAL_SRC_FILES := mediacodec_ndk.c mediaextrator_ndk.c McNative.cpp GMediaExtractor.cpp \
-					$(THREAD_PATH)/gmutex.cpp $(THREAD_PATH)/gthread.cpp $(THREAD_PATH)/gthreadpool.cpp 
+LOCAL_SRC_FILES := mediacodec_ndk.c \
+				mediaextrator_ndk.c \
+				McNative.cpp \
+				GH264Decodec.cpp \
+				GH264Extractor.cpp \
+				GMediaExtractor.cpp \
+				$(THREAD_PATH)/gmutex.cpp \
+				$(THREAD_PATH)/gthread.cpp \
+				$(THREAD_PATH)/gthreadpool.cpp \
+				$(NAREFL_PATH)/NALDecoder.cpp
 
 #LOCAL_SHARED_LIBRARIES := avformat avcodec avutil swresample
 
