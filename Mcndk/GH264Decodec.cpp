@@ -3,7 +3,6 @@
 #include "ComDefine.h"
 #include "mediacodec.h"
 #include "GH264Decodec.h"
-#include "NALDecoder.h"
 
 int charsToInt1(char* src, int offset)
 {
