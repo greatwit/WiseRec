@@ -16,3 +16,7 @@ frame-rate: int32(30),
 max-input-size: int32(38981), 
 csd-0: data, 
 csd-1: data
+
+
+result:
+mediacodec need idr frame first.
