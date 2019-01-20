@@ -45,6 +45,7 @@ static struct members members[] =
 		{ "AMediaFormat_toString", OFF(toString), true },
 		{ "AMediaFormat_setString", OFF(setString), true },
 		{ "AMediaFormat_setInt32", OFF(setInt32), true },
+		{ "AMediaFormat_setBuffer", OFF(setBuffer), true },
 		{ "AMediaFormat_getInt32", OFF(getInt32), true },
 		{ "AMediaFormat_getString", OFF(getString), true },//7
 	#undef OFF

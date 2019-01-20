@@ -48,7 +48,7 @@ void* GH264Decodec::Thread() {
 			dataLen = charsToInt1(mcharLength,0);
 			res 	= fread(data, dataLen, 1, mrFile);
 
-			GLOGD("startCode res:%d dataLen:%d", res, dataLen);
+			GLOGW("startCode res:%d dataLen:%d", res, dataLen);
 			if(res>0) {
 				media_status_t status;
 				GLOGW("AMediaCodec.dequeueInputBuffer begin.");
@@ -74,8 +74,12 @@ void* GH264Decodec::Thread() {
 				status = mSymbols.AMediaCodec.releaseOutputBuffer(mCodec, out_index, true);
 				GLOGW("AMediaCodec.releaseOutputBuffer status:%d", status);
 				usleep(25*1000);
-			}else
+			}
+			else
+			{
+				GLOGW("while loop break.");
 				break;
+			}
 		}
 	}
 
@@ -93,12 +97,16 @@ int GH264Decodec::startPlayer(const char*filepath, void *surface, int w, int h) 
 	mWidth = w;
 	mHeight= h;
 	mrFile =  fopen( filepath, "rb" );
+	if(mrFile)
+		GLOGI("open file:%s success.", filepath);
 
 	mCodec    = mSymbols.AMediaCodec.createDecoderByType("video/avc");
 	if(!mCodec)
-		GLOGE("AMediaCodec.createDecoderByType for %s failed", "video/avc");
+		GLOGE("AMediaCodec.createDecoderByType for %s successful", "video/avc");
 
+		mSymbols.AMediaFormat.setString(mFormat, "mime", "video/avc");
 		GLOGW("format string:%s\n", mSymbols.AMediaFormat.toString(mFormat));
+
 		if (mSymbols.AMediaCodec.configure(mCodec, mFormat, (ANativeWindow*)surface, NULL, 0) != AMEDIA_OK)
 		{
 			GLOGE("AMediaCodec.configure failed");

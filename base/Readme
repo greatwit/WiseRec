@@ -5,3 +5,14 @@ system/core/include/utils/Errors.h
 
 native/include/media/openmax/OMX_IVCommon.h
 native/include/media/openmax/OMX_IVCommon.h
+
+
+mcndk:
+mime: string(video/avc), 
+durationUs: int64(12498744), 
+width: int32(1280), 
+height: int32(720), 
+frame-rate: int32(30), 
+max-input-size: int32(38981), 
+csd-0: data, 
+csd-1: data

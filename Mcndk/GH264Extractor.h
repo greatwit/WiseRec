@@ -24,6 +24,7 @@ class GH264Extractor : private GThread
 	    AMediaFormat* 		mFormat;
 	    FILE 				*mrFile;
 	    int mWidth,mHeight;
+	    void *				mSurface;
 };
 
 #endif

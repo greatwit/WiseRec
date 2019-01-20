@@ -163,7 +163,9 @@ int GetAnnexbNALU (FILE *file, NALU_t *nalu)
 	  // start code, and (pos+rewind)-startcodeprefix_len is the size of the NALU excluding the start code
 
 	  nalu->len = (pos+rewind)-nalu->startcodeprefix_len;
-	  memcpy (nalu->buf, &Buf[nalu->startcodeprefix_len], nalu->len);//拷贝一个完整NALU，不拷贝起始前缀0x000001或0x00000001
+	  char head[4] = {0,0,0,1};
+	  memcpy(nalu->buf, head, 4);
+	  memcpy (nalu->buf+4, &Buf[nalu->startcodeprefix_len], nalu->len);//拷贝一个完整NALU，不拷贝起始前缀0x000001或0x00000001
 	  nalu->forbidden_bit = nalu->buf[0] & 0x80; 		//1 bit
 	  nalu->nal_reference_idc = nalu->buf[0] & 0x60; 	// 2 bit
 	  nalu->nal_unit_type = (nalu->buf[0]) & 0x1f;		// 5 bit

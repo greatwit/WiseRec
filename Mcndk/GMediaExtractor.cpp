@@ -92,12 +92,19 @@ int GMediaExtractor::startPlayer(const char*filepath, void *surface) {
 		for(int i=0;i<count;i++) {
 			int32_t iout = 0;
 			if(i==0) {
-				AMediaFormat*format = mSymbols.AMediaExtractor.getTrackFormat(mExtrator, i);
+				//AMediaFormat*format = mSymbols.AMediaExtractor.getTrackFormat(mExtrator, i);
 //				const char *csd = new char[100];
 //				memset((void*)csd, 0, 100);
 //				mSymbols.AMediaFormat.getString(format, "csd-0", &csd);
 //				GLOGW("AMediaFormat.get csd-0:%s, len:%d", csd, strlen(csd));
 //				delete[] csd;
+				AMediaFormat*format = mSymbols.AMediaFormat.newfmt();
+				mSymbols.AMediaFormat.setString(format, "mime", "video/avc");
+				mSymbols.AMediaFormat.setInt32(format, "durationUs", 12498744);
+				mSymbols.AMediaFormat.setInt32(format, "width", 1280);
+				mSymbols.AMediaFormat.setInt32(format, "height", 720);
+				mSymbols.AMediaFormat.setInt32(format, "frame-rate", 1280);
+				mSymbols.AMediaFormat.setInt32(format, "max-input-size", 38981);
 
 				GLOGW("format string:%s\n", mSymbols.AMediaFormat.toString(format));
 			    if (mSymbols.AMediaCodec.configure(mCodec, format, (ANativeWindow*)surface, NULL, 0) != AMEDIA_OK)

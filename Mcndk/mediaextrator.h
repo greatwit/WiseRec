@@ -49,6 +49,7 @@ typedef media_status_t (*pf_AMediaFormat_delete)(AMediaFormat*);
 typedef const char* (*pf_AMediaFormat_toString)(AMediaFormat *);
 typedef void (*pf_AMediaFormat_setString)(AMediaFormat*, const char* name, const char* value);
 typedef void (*pf_AMediaFormat_setInt32)(AMediaFormat*, const char* name, int32_t value);
+typedef void (*pf_AMediaFormat_setBuffer)(AMediaFormat*, const char* name, void* data, size_t size);
 typedef bool (*pf_AMediaFormat_getInt32)(AMediaFormat*, const char *name, int32_t *out);
 typedef bool (*pf_AMediaFormat_getString)(AMediaFormat*, const char *name, const char **out);
 
@@ -97,6 +98,7 @@ struct symext
         pf_AMediaFormat_toString toString;
         pf_AMediaFormat_setString setString;
         pf_AMediaFormat_setInt32 setInt32;
+        pf_AMediaFormat_setBuffer setBuffer;
         pf_AMediaFormat_getInt32 getInt32;
         pf_AMediaFormat_getString getString;
     } AMediaFormat;

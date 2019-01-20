@@ -52,8 +52,8 @@ static jboolean StopExtratorPlayer(JNIEnv *env, jobject)
 static jboolean StartH264Extrator(JNIEnv *env, jobject, jstring filepath, jobject surface, jint w, jint h) {
 	bool bRes = false;
 	ANativeWindow *pAnw = ANativeWindow_fromSurface(env, surface);
-
-	mH264 = new GH264Extractor();
+	if(mH264==NULL)
+		mH264 = new GH264Extractor();
 	jboolean isOk = JNI_FALSE;
 	const char *path = env->GetStringUTFChars(filepath, &isOk);
 	mH264->startPlayer(path, pAnw, w, h);
@@ -77,6 +77,8 @@ static jboolean StopH264Extrator(JNIEnv *env, jobject)
 
 static void SetExtratorInt32(JNIEnv *env, jobject, jstring key, jint value) {
 	jboolean isOk  = JNI_FALSE;
+	if(mH264==NULL)
+		mH264 = new GH264Extractor();
 	const char *ck = env->GetStringUTFChars(key, &isOk);
 	mH264->setInt32(ck, value);
 	env->ReleaseStringUTFChars(key, ck);
@@ -86,7 +88,8 @@ static jboolean StartH264Decodec(JNIEnv *env, jobject, jstring filepath, jobject
 	bool bRes = false;
 	ANativeWindow *pAnw = ANativeWindow_fromSurface(env, surface);
 
-	mDecodec = new GH264Decodec();
+	if(mDecodec==NULL)
+		 mDecodec = new GH264Decodec();
 	jboolean isOk = JNI_FALSE;
 	const char *path = env->GetStringUTFChars(filepath, &isOk);
 	mDecodec->startPlayer(path, pAnw, w, h);
@@ -110,6 +113,8 @@ static jboolean StopH264Decodec(JNIEnv *env, jobject)
 
 static void SetDecodecInt32(JNIEnv *env, jobject, jstring key, jint value) {
 	jboolean isOk  = JNI_FALSE;
+	if(mDecodec==NULL)
+		mDecodec = new GH264Decodec();
 	const char *ck = env->GetStringUTFChars(key, &isOk);
 	mDecodec->setInt32(ck, value);
 	env->ReleaseStringUTFChars(key, ck);
