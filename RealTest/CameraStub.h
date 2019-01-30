@@ -10,6 +10,7 @@ class CameraStub : public IVideoCallback
 {
 	public:
 		CameraStub();
+		CameraStub(IVideoCallback*callback);
 		virtual ~CameraStub();
 		void CreateCamera(int cameraId, jstring clientPackageName);
 		void SetCameraParameter(jstring params);
@@ -22,7 +23,8 @@ class CameraStub : public IVideoCallback
 		void VideoSource(VideoFrame *pBuf);
 
 	private:
-		CameraContext *mCamera;
+		CameraContext 	*mCamera;
+		IVideoCallback	*mVideoCall;
 };
 
 #endif

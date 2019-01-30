@@ -103,7 +103,7 @@ int GH264Extractor::startPlayer(const char*filepath, void *surface, int w, int h
 
 	mWidth = w;
 	mHeight= h;
-	mrFile =  OpenBitstreamFile( filepath );
+	mrFile = OpenBitstreamFile( filepath );
 
 	mCodec    = mSymbols.AMediaCodec.createDecoderByType("video/avc");
 	if(!mCodec)

@@ -4,7 +4,15 @@
 #include "ComDefine.h"
 #define TAG "CameraStub"
 
-	CameraStub::CameraStub() {
+	CameraStub::CameraStub()
+		:mVideoCall(NULL)
+	{
+		mCamera = CameraContext::getInstance();
+	}
+
+	CameraStub::CameraStub(IVideoCallback*callback)
+		:mVideoCall(callback)
+	{
 		mCamera = CameraContext::getInstance();
 	}
 
@@ -16,7 +24,13 @@
 		if(mCamera) {
 			//JNIEnv *env = AndroidRuntime::getJNIEnv();
 			//jstring clientPackageName = env->NewStringUTF(packName);
-			int camSet = CameraContext::getInstance()->CameraSetup(this, cameraId, clientPackageName);
+
+			int camSet = 0;
+			if(mVideoCall)
+				camSet = CameraContext::getInstance()->CameraSetup(mVideoCall, cameraId, clientPackageName);
+			else
+				camSet = CameraContext::getInstance()->CameraSetup(this, cameraId, clientPackageName);
+
 			if(camSet<0) {
 				GLOGE("function %s,line:%d CameraSetup failed.", __FUNCTION__, __LINE__);
 				return ;
