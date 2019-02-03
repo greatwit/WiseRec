@@ -19,8 +19,17 @@ GH264Extractor::GH264Extractor()
 
 GH264Extractor::~GH264Extractor()
 {
-	if(mrFile)
+	if(mFormat) {
+		mSymbols.AMediaFormat.deletefmt(mFormat);
+		mFormat = NULL;
+	}
+
+	ReleaseExtratorSymbols(&mSymbols);
+
+	if(mrFile) {
 		fclose(mrFile);
+		mrFile = NULL;
+	}
 }
 
 void* GH264Extractor::Thread() {

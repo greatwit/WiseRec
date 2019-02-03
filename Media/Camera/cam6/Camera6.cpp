@@ -1,6 +1,6 @@
 
 #include "CameraListen.h"
-#define TAG "Camera4"
+#define TAG "Camera6"
 
 #include "ComDefine.h"
 
@@ -40,7 +40,7 @@ int JNICameraListen::CameraSetup(jint cameraId, jstring clientPackageName)//"com
 	//	gListenContext = new JNICameraListen(camera);
 
     mCamera->setListener(this);
-	mCamera->setPreviewCallbackFlags(CAMERA_FRAME_CALLBACK_FLAG_BARCODE_SCANNER);
+	mCamera->setPreviewCallbackFlags(CAMERA_FRAME_CALLBACK_FLAG_BARCODE_SCANNER);//CAMERA_FRAME_CALLBACK_FLAG_CAMERA
 
 	return 0;
 }

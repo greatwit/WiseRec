@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include "CameraStub.h"
-//#include "android_runtime/android_view_Surface.h"
+#include "CameraNdkEncodec.h"
 #include <android/native_window_jni.h>
 
 #include "ComDefine.h"
@@ -11,12 +11,19 @@
 #define CLASS_PATH	"com/great/happyness/medialib/NativeCamera"
 
 CameraStub *gCamera = NULL;
+CameraNdkEncodec *gNdkenCam = NULL;
 
 static jboolean OpenCamera(JNIEnv *env, jobject, jint cameraId, jstring clientName)
 {
 	if(!gCamera)
 		gCamera = new CameraStub();
+
 	gCamera->CreateCamera(cameraId, clientName);
+
+//	const char *readfile = env->GetStringUTFChars(clientName, NULL);
+//	gCamera->CreateCamera(cameraId, (char*)readfile);
+//	GLOGW("OpenCamera clientName:%s\n", readfile);
+//	env->ReleaseStringUTFChars(clientName, readfile);
 
 	return true;
 }
@@ -50,7 +57,68 @@ static void StartPreview(JNIEnv *env, jobject, jobject surface) {
 static void StopPreview(JNIEnv *env, jobject) {
 	gCamera->StopPreview();
 }
+////////////////////////////////////////////////////////////////CAMERA NDK ENCODEC///////////////////////////////////////////////////////////////
 
+static jboolean StartCamndkEncodec(JNIEnv *env, jobject, jstring readpath, jobject surface) {
+	bool ret = true;
+	if(gNdkenCam==NULL)
+		gNdkenCam = new CameraNdkEncodec();
+
+	ANativeWindow *pAnw = ANativeWindow_fromSurface(env, surface);
+	const char *readfile = env->GetStringUTFChars(readpath, NULL);
+
+	gNdkenCam->startPlayer(readfile, pAnw, 0, 0);
+
+	GLOGW("StartCamndkEncodec readfile:%s\n", readfile);
+	env->ReleaseStringUTFChars(readpath, readfile);
+
+	return ret;
+}
+
+static jboolean StopCamndkEncodec(JNIEnv *env, jobject) {
+	bool ret = true;
+	if(gNdkenCam) {
+		gNdkenCam->stopPlayer();
+		delete gNdkenCam;
+		gNdkenCam = NULL;
+	}
+	return ret;
+}
+
+static void McndkSetCameraParam(JNIEnv *env, jobject, jstring params) {
+	gNdkenCam->SetCameraParameter(params);
+}
+
+static jstring McndkGetCameraParam(JNIEnv *env, jobject) {
+	return gNdkenCam->GetCameraParameter();
+}
+
+static jboolean McndkSetInt32(JNIEnv *env, jobject, jstring key, jint value) {
+	jboolean isOk  = JNI_FALSE;
+
+	const char *ck = env->GetStringUTFChars(key, &isOk);
+	gNdkenCam->setInt32(ck, value);
+	env->ReleaseStringUTFChars(key, ck);
+	return true;
+}
+
+static jboolean McndkOpenCamera(JNIEnv *env, jobject, jint cameraId, jstring clientName)
+{
+	if(gNdkenCam==NULL)
+		gNdkenCam = new CameraNdkEncodec();
+
+	gNdkenCam->openCamera(cameraId, clientName);
+
+	return true;
+}
+
+static jboolean McndkCloseCamera(JNIEnv *env, jobject) {
+	if(gNdkenCam) {
+		gNdkenCam->closeCamera();
+	}
+
+	return true;
+}
 
 static JNINativeMethod gMethods[] =
 {
@@ -60,6 +128,14 @@ static JNINativeMethod gMethods[] =
 		{ "GetCameraParameter", "()Ljava/lang/String;", (void *)GetCameraParameter },
 		{ "StartPreview", "(Landroid/view/Surface;)V", (void *)StartPreview },
 		{ "StopPreview", "()V", (void *)StopPreview },
+
+		{ "StartCamndkEncodec", "(Ljava/lang/String;Landroid/view/Surface;)Z", (void *)StartCamndkEncodec },
+		{ "StopCamndkEncodec", "()Z", (void *)StopCamndkEncodec },
+		{ "McndkSetCameraParam", "(Ljava/lang/String;)V", (void *)McndkSetCameraParam },
+		{ "McndkGetCameraParam", "()Ljava/lang/String;", (void *)McndkGetCameraParam },
+		{ "McndkSetInt32", "(Ljava/lang/String;I)Z", (void*)McndkSetInt32 },
+		{ "McndkOpenCamera", "(ILjava/lang/String;)Z", (void *)McndkOpenCamera },
+		{ "McndkCloseCamera", "()Z", (void *)McndkCloseCamera },
 };
 
 int jniRegisterNativeMethods1(JNIEnv* env, const char* className,

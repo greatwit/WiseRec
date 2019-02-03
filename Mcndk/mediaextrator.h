@@ -121,6 +121,8 @@ struct symext
         pf_AMediaCodec_releaseOutputBufferAtTime releaseOutputBufferAtTime;
         pf_AMediaCodec_setOutputSurface setOutputSurface;
     } AMediaCodec;
+
+    void *mHandle;
 };
 
 
@@ -131,6 +133,7 @@ extern "C"
 
 //extern struct symext;
 bool InitExtratorSymbols(struct symext *symbols);
+bool ReleaseExtratorSymbols(struct symext *symbols);
 
 #ifdef __cplusplus
 };
