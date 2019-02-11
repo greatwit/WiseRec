@@ -36,7 +36,7 @@ int CameraRelease()
 void SetCameraParameter(jstring params)
 {
 	if(gListenContext != NULL)
-		gListenContext->setParameters(params);
+	   gListenContext->setParameters(params);
 }
 
 jstring GetCameraParameter()

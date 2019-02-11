@@ -27,9 +27,9 @@
 
 			int camSet = 0;
 			if(mVideoCall)
-				camSet = CameraContext::getInstance()->CameraSetup(mVideoCall, cameraId, clientPackageName);
+				camSet = mCamera->CameraSetup(mVideoCall, cameraId, clientPackageName);
 			else
-				camSet = CameraContext::getInstance()->CameraSetup(this, cameraId, clientPackageName);
+				camSet = mCamera->CameraSetup(this, cameraId, clientPackageName);
 
 			if(camSet<0) {
 				GLOGE("function %s,line:%d CameraSetup failed.", __FUNCTION__, __LINE__);

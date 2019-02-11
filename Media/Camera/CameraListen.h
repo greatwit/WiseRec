@@ -22,6 +22,7 @@ using namespace android;
 class JNICameraListen: public CameraListener
 {
 	public:
+		JNICameraListen();
 		JNICameraListen(IVideoCallback *callback);
 		~JNICameraListen() { }
 		sp<Camera> getCamera();
@@ -29,6 +30,7 @@ class JNICameraListen: public CameraListener
 		virtual void notify(int32_t msgType, int32_t ext1, int32_t ext2);
 		virtual void postData(int32_t msgType, const sp<IMemory>& dataPtr, camera_frame_metadata_t *metadata);
 		virtual void postDataTimestamp(nsecs_t timestamp, int32_t msgType, const sp<IMemory>& dataPtr);
+		virtual void postRecordingFrameHandleTimestamp(nsecs_t timestamp, native_handle_t* handle);
 		
 		
 		// connect to camera service

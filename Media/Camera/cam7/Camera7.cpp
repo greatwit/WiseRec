@@ -20,7 +20,7 @@ int JNICameraListen::CameraSetup(jint cameraId, jstring clientPackageName)//"com
 		String16 clientName(rawClientName, rawClientNameLen);
 		env->ReleaseStringChars(clientPackageName,
 								reinterpret_cast<const jchar*>(rawClientName));
-		mCamera = Camera::connect(cameraId, clientName, Camera::USE_CALLING_UID, Camera::USE_CALLING_UID);
+		mCamera = Camera::connect(cameraId, clientName, Camera::USE_CALLING_UID, Camera::USE_CALLING_PID);
 	}
 
     if (mCamera == NULL) {

@@ -7,7 +7,12 @@
 
 using namespace android;
 
+JNICameraListen::JNICameraListen()
+	:mCamera(NULL)
+	,mCallback(NULL)
+{
 
+}
 
 JNICameraListen::JNICameraListen(IVideoCallback *callback):mCamera(NULL)
 {
@@ -85,7 +90,8 @@ void JNICameraListen::postData(int32_t msgType, const sp<IMemory>& dataPtr, came
 				buff.addrVirY = heapBase;
 				buff.length   = size;
 				mCallback->VideoSource(&buff);
-			}
+			}else
+				ALOGE("heapData: off=%ld, size=%d", offset, size);
 			
 			//CodecBaseLib::getInstance()->AddBuffer((char*)data, size);
 		}
@@ -95,12 +101,13 @@ void JNICameraListen::postData(int32_t msgType, const sp<IMemory>& dataPtr, came
 	}
 }
 
-void JNICameraListen::postDataTimestamp(nsecs_t timestamp, int32_t msgType, const sp<IMemory>& dataPtr)
-{
+void JNICameraListen::postDataTimestamp(nsecs_t timestamp, int32_t msgType, const sp<IMemory>& dataPtr) {
     // TODO: plumb up to Java. For now, just drop the timestamp
 }
 
+void JNICameraListen::postRecordingFrameHandleTimestamp(nsecs_t timestamp, native_handle_t* handle) {
 
+}
 
 
 

@@ -31,6 +31,9 @@ class CameraNdkEncodec : public IVideoCallback
 		AMediaCodec*	 	mCodec;
 	    AMediaFormat* 		mFormat;
 	    FILE 				*mpFile;
+
+	    int					mUvlen;
+	    int					mYlen;
 };
 
 #endif

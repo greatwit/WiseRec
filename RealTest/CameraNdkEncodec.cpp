@@ -8,6 +8,8 @@ CameraNdkEncodec::CameraNdkEncodec()
 		:mFormat(NULL)
 		,mCodec(NULL)
 		,mpFile(NULL)
+		,mUvlen(0)
+		,mYlen(0)
 {
 	mCamera = new CameraStub(this);
 
@@ -62,6 +64,12 @@ int CameraNdkEncodec::startPlayer(const char*filepath, void *surface, int w, int
 	if(!mCodec)
 		GLOGE("AMediaCodec.createEncoderByType for %s successful", "video/avc");
 
+		int mVideoWidht=0,mVideoHeight=0;
+		mSymbols.AMediaFormat.getInt32(mFormat, "width", &mVideoWidht);
+		mSymbols.AMediaFormat.getInt32(mFormat, "height", &mVideoHeight);
+		GLOGW("mVideoWidht:%d mVideoHeight:%d\n", mVideoWidht, mVideoHeight);
+		mUvlen	= mVideoWidht*mVideoHeight/2;
+		mYlen	= mVideoWidht*mVideoHeight;
 
 		mSymbols.AMediaFormat.setString(mFormat, "mime", "video/avc");
 		GLOGW("format string:%s\n", mSymbols.AMediaFormat.toString(mFormat));
@@ -98,6 +106,17 @@ void CameraNdkEncodec::setInt32(const char*key, int value) {
 
 void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
 	media_status_t status;
+
+	int i = 0, uv = 0;
+	uint8_t* yuv = (uint8_t*)pBuf->addrVirY;
+	while(i<mUvlen) {
+		uv = mYlen+i;
+		uint8_t tmp = yuv[uv];
+		yuv[uv] = yuv[uv+1];
+		yuv[uv+1] = tmp;
+		i+=2;
+	}
+
 	GLOGW("AMediaCodec.dequeueInputBuffer begin buf len:%d ", pBuf->length);
 	int index = mSymbols.AMediaCodec.dequeueInputBuffer(mCodec, 10000);//int64_t timeoutUs
 	GLOGW("AMediaCodec.dequeueInputBuffer value:%d", index);
@@ -114,7 +133,7 @@ void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
 		usleep(20*1000);
 	}
 
-	usleep(2*1000);
+	//usleep(2*1000);
 	AMediaCodecBufferInfo info;
 	ssize_t out_index = mSymbols.AMediaCodec.dequeueOutputBuffer(mCodec, &info, 10000);//AMediaCodecBufferInfo *info, int64_t timeoutUs
 	GLOGW("AMediaCodec.dequeueOutputBuffer out_index:%d size:%d", out_index, info.size);
@@ -123,7 +142,7 @@ void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
 		uint8_t *data = mSymbols.AMediaCodec.getOutputBuffer(mCodec, out_index, &out_size);
 		fwrite(data, 1, info.size, mpFile);
 	}
-	usleep(2*1000);
+	//usleep(2*1000);
 	status = mSymbols.AMediaCodec.releaseOutputBuffer(mCodec, out_index, true);
 	GLOGW("AMediaCodec.releaseOutputBuffer status:%d", status);
 }
