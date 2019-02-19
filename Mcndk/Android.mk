@@ -48,6 +48,7 @@ LOCAL_SRC_FILES := mediacodec_ndk.c \
 				McNative.cpp \
 				GH264Decodec.cpp \
 				GH264Extractor.cpp \
+				UpperNdkEncodec.cpp \
 				GMediaExtractor.cpp \
 				$(THREAD_PATH)/gmutex.cpp \
 				$(THREAD_PATH)/gthread.cpp \
@@ -63,4 +64,5 @@ LOCAL_SRC_FILES := mediacodec_ndk.c \
 LOCAL_LDLIBS := -llog -landroid
 
 include $(BUILD_SHARED_LIBRARY)
+
 

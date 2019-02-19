@@ -14,6 +14,8 @@ GMediaExtractor::GMediaExtractor()
 	,mCodec(NULL)
 	,mbRunning(false)
 {
+	mSymbols.mHandle = NULL;
+
 	InitExtratorSymbols(&mSymbols);
 }
 

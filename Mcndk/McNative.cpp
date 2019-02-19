@@ -4,6 +4,7 @@
 #include "GMediaExtractor.h"
 #include "GH264Extractor.h"
 #include "GH264Decodec.h"
+#include "UpperNdkEncodec.h"
 
 
 //#include <android/native_window.h>
@@ -16,6 +17,7 @@ JavaVM*		g_javaVM		= NULL;
 GMediaExtractor *mExtractor = NULL;
 GH264Extractor  *mH264		= NULL;
 GH264Decodec    *mDecodec 	= NULL;
+UpperNdkEncodec *mUpEncodec = NULL;
 
 /////////////////////////////////////////////////////extrator player///////////////////////////////////////////////////////////
 
@@ -48,6 +50,8 @@ static jboolean StopExtratorPlayer(JNIEnv *env, jobject)
 	 }
 	 return bRes;
 }
+
+/////////////////////////////////////////////h264 extractor play///////////////////////////////////////////////////
 
 static jboolean StartH264Extrator(JNIEnv *env, jobject, jstring filepath, jobject surface, jint w, jint h) {
 	bool bRes = false;
@@ -83,6 +87,8 @@ static void SetExtratorInt32(JNIEnv *env, jobject, jstring key, jint value) {
 	mH264->setInt32(ck, value);
 	env->ReleaseStringUTFChars(key, ck);
 }
+
+///////////////////////////////////////////////////h264 decodec//////////////////////////////////////////////////
 
 static jboolean StartH264Decodec(JNIEnv *env, jobject, jstring filepath, jobject surface, jint w, jint h) {
 	bool bRes = false;
@@ -120,6 +126,53 @@ static void SetDecodecInt32(JNIEnv *env, jobject, jstring key, jint value) {
 	env->ReleaseStringUTFChars(key, ck);
 }
 
+///////////////////////////////////////////////upper camera encodec/////////////////////////////////////////////////
+
+static jboolean StartUpperCamndkEncodec(JNIEnv *env, jobject, jstring savepath) {
+	bool ret = true;
+	if(mUpEncodec==NULL)
+		mUpEncodec = new UpperNdkEncodec();
+
+	const char *readfile = env->GetStringUTFChars(savepath, NULL);
+
+	mUpEncodec->startPlayer(readfile, 0, 0);
+
+	GLOGW("StartCamndkEncodec savefile:%s\n", readfile);
+	env->ReleaseStringUTFChars(savepath, readfile);
+
+	return ret;
+}
+
+static jboolean StopUpperCamndkEncodec(JNIEnv *env, jobject) {
+	bool ret = true;
+	if(mUpEncodec) {
+		mUpEncodec->stopPlayer();
+		delete mUpEncodec;
+		mUpEncodec = NULL;
+	}
+	return ret;
+}
+
+static jboolean UpperCamndkSetInt32(JNIEnv *env, jobject, jstring key, jint value) {
+	jboolean isOk  = JNI_FALSE;
+	if(mUpEncodec==NULL)
+		mUpEncodec = new UpperNdkEncodec();
+
+	const char *ck = env->GetStringUTFChars(key, &isOk);
+	mUpEncodec->setInt32(ck, value);
+	env->ReleaseStringUTFChars(key, ck);
+	return true;
+}
+
+static jboolean UpperCamndkProvide(JNIEnv* env, jobject, jbyteArray javaCameraFrame, jint length) {
+
+	jbyte* cameraFrame = env->GetByteArrayElements(javaCameraFrame, NULL);
+	mUpEncodec->ProvideNV21Data(reinterpret_cast<uint8_t*>(cameraFrame), length);
+	env->ReleaseByteArrayElements(javaCameraFrame, cameraFrame, JNI_ABORT);
+
+	return true;
+}
+
 static JNINativeMethod video_method_table[] = {
 		{"StartExtratorPlayer", "(Ljava/lang/String;Landroid/view/Surface;)Z", (void*)StartExtratorPlayer },
 		{"StopExtratorPlayer", "()Z", (void*)StopExtratorPlayer },
@@ -131,6 +184,11 @@ static JNINativeMethod video_method_table[] = {
 		{"StartH264Decodec", "(Ljava/lang/String;Landroid/view/Surface;II)Z", (void*)StartH264Decodec },
 		{"StopH264Decodec", "()Z", (void*)StopH264Decodec },
 		{"SetDecodecInt32", "(Ljava/lang/String;I)V", (void*)SetDecodecInt32 },
+
+		{ "StartUpperCamndkEncodec", "(Ljava/lang/String;)Z", (void *)StartUpperCamndkEncodec },
+		{ "StopUpperCamndkEncodec", "()Z", (void *)StopUpperCamndkEncodec },
+		{ "UpperCamndkSetInt32", "(Ljava/lang/String;I)Z", (void*)UpperCamndkSetInt32 },
+		{ "UpperCamndkProvide", "([BI)Z", (void *)UpperCamndkProvide },
 };
 
 int registerNativeMethods(JNIEnv* env, const char* className, JNINativeMethod* methods, int numMethods)

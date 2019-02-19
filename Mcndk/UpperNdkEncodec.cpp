@@ -2,22 +2,24 @@
 #include <unistd.h>
 #include <android/native_window_jni.h>
 #include "ComDefine.h"
-#include "CameraNdkEncodec.h"
+#include "UpperNdkEncodec.h"
 
-CameraNdkEncodec::CameraNdkEncodec()
+UpperNdkEncodec::UpperNdkEncodec()
 		:mFormat(NULL)
 		,mCodec(NULL)
 		,mpFile(NULL)
 		,mUvlen(0)
 		,mYlen(0)
 {
-	mCamera = new CameraStub(this);
+	mSymbols.mHandle = NULL;
 
-	InitExtratorSymbols(&mSymbols);
-	mFormat = mSymbols.AMediaFormat.newfmt();
+	if(InitExtratorSymbols(&mSymbols))
+		mFormat = mSymbols.AMediaFormat.newfmt();
+
+	GLOGE("UpperNdkEncodec construct\n");
 }
 
-CameraNdkEncodec::~CameraNdkEncodec() {
+UpperNdkEncodec::~UpperNdkEncodec() {
 	if(mpFile) {
 		fclose(mpFile);
 		mpFile = NULL;
@@ -29,34 +31,15 @@ CameraNdkEncodec::~CameraNdkEncodec() {
 	}
 
 	ReleaseExtratorSymbols(&mSymbols);
+
+	GLOGE("UpperNdkEncodec ~construct\n");
 }
 
-bool CameraNdkEncodec::openCamera( int cameraId, jstring clientName) {
-	bool ret = true;
-	mCamera->CreateCamera(cameraId, clientName);
-	return ret;
-}
-
-bool CameraNdkEncodec::closeCamera() {
-	bool ret = true;
-	if(mCamera) {
-		mCamera->CloseCamera();
-		delete mCamera;
-		mCamera = NULL;
-	}
-	return ret;
-}
-
-void CameraNdkEncodec::SetCameraParameter(jstring params) {
-	mCamera->SetCameraParameter(params);
-}
-
-jstring CameraNdkEncodec::GetCameraParameter() {
-	return mCamera->GetCameraParameter();
-}
-
-int CameraNdkEncodec::startPlayer(const char*filepath, void *surface, int w, int h) {
+int UpperNdkEncodec::startPlayer(const char*filepath, int w, int h) {
 	int rest = 1;
+
+	if(mFormat==NULL)
+		return 0;
 
 	mpFile = fopen(filepath, "w");
 
@@ -84,12 +67,10 @@ int CameraNdkEncodec::startPlayer(const char*filepath, void *surface, int w, int
 	    if (mSymbols.AMediaCodec.start(mCodec) != AMEDIA_OK)
 	        GLOGE("AMediaCodec.start failed");
 
-	    mCamera->StartPreview((ANativeWindow*)surface);
-
 	return rest;
 }
 
-int CameraNdkEncodec::stopPlayer() {
+int UpperNdkEncodec::stopPlayer() {
 	int rest = -1;
 
 	if(mCodec) {
@@ -100,15 +81,15 @@ int CameraNdkEncodec::stopPlayer() {
 	return rest;
 }
 
-void CameraNdkEncodec::setInt32(const char*key, int value) {
+void UpperNdkEncodec::setInt32(const char*key, int value) {
 	 mSymbols.AMediaFormat.setInt32(mFormat, key, value);
 }
 
-void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
+void UpperNdkEncodec::ProvideNV21Data(uint8_t *pBuf, int len) {
 	media_status_t status;
 
 	int i = 0, uv = 0;
-	uint8_t* yuv = (uint8_t*)pBuf->addrVirY;
+	uint8_t* yuv = pBuf;
 	while(i<mUvlen) {
 		uv = mYlen+i;
 		uint8_t tmp = yuv[uv];
@@ -117,7 +98,7 @@ void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
 		i+=2;
 	}
 
-	GLOGW("AMediaCodec.dequeueInputBuffer begin buf len:%d ", pBuf->length);
+	GLOGW("AMediaCodec.dequeueInputBuffer begin buf len:%d ", len);
 	int index = mSymbols.AMediaCodec.dequeueInputBuffer(mCodec, 10000);//int64_t timeoutUs
 	GLOGW("AMediaCodec.dequeueInputBuffer value:%d", index);
 	if(index>=0) {
@@ -125,9 +106,9 @@ void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
 		size_t i_mc_size;
 		p_mc_buf = mSymbols.AMediaCodec.getInputBuffer(mCodec, index, &i_mc_size);//size_t idx, size_t *out_size
 		GLOGW("AMediaCodec.getInputBuffer mcSize:%d", i_mc_size);
-		memcpy(p_mc_buf, (uint8_t*)pBuf->addrVirY, pBuf->length);
-		status = mSymbols.AMediaCodec.queueInputBuffer(mCodec, index, 0, pBuf->length,
-				50000, 0);
+		memcpy(p_mc_buf, (uint8_t*)pBuf, len);
+		status = mSymbols.AMediaCodec.queueInputBuffer(mCodec, index, 0, len, 50000, 0);
+
 		GLOGW("mSymbols.AMediaCodec.queueInputBuffer status:%d", status);
 	} else {
 		usleep(20*1000);
@@ -137,6 +118,7 @@ void CameraNdkEncodec::VideoSource(VideoFrame *pBuf) {
 	AMediaCodecBufferInfo info;
 	ssize_t out_index = mSymbols.AMediaCodec.dequeueOutputBuffer(mCodec, &info, 10000);//AMediaCodecBufferInfo *info, int64_t timeoutUs
 	GLOGW("AMediaCodec.dequeueOutputBuffer out_index:%d size:%d", out_index, info.size);
+
 	if((out_index>=0)&&info.size>0) {
 		size_t out_size = 0;
 		uint8_t *data = mSymbols.AMediaCodec.getOutputBuffer(mCodec, out_index, &out_size);

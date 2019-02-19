@@ -21,6 +21,8 @@
 //#include "omxil_utils.h"
 //
 #include "mediacodec.h"
+
+#define  TAG "mediacodec_ndk"
 #include "ComDefine.h"
 
 
@@ -198,49 +200,49 @@ static struct members members[] =
 };
 #undef OFF
 
+
+static void *mNdkHandle = NULL;
+
 /* Initialize all symbols.
  * Done only one time during the first initialisation */
 static bool
 InitSymbols(mc_api *api)
 {
     //static vlc_mutex_t lock = VLC_STATIC_MUTEX;
-    static int i_init_state = -1;
+    int i_init_state = 0;
     bool ret;
 
     //vlc_mutex_lock(&lock);
 
-    if (i_init_state != -1) {
-		GLOGE("i_init_state != -1.");
-        goto end;
-	}
-
-    i_init_state = 0;
-
-    void *ndk_handle = dlopen("libmediandk.so", RTLD_NOW);
-    if (!ndk_handle) {
-		GLOGE("dlopen failed.");
-        goto end;
-	}
-	int i = 0;
-    for (; members[i].name; i++)
-    {
-        void *sym = dlsym(ndk_handle, members[i].name);
-        if (!sym && members[i].critical)
-        {
-            dlclose(ndk_handle);
-			GLOGE("dlsym total:%d", i);
+    if(mNdkHandle==NULL) {
+        void *mNdkHandle = dlopen("libmediandk.so", RTLD_NOW);
+        if (!mNdkHandle) {
+    		GLOGE("dlopen failed.");
             goto end;
+    	}
+    	int i = 0;
+        for (; members[i].name; i++)
+        {
+            void *sym = dlsym(mNdkHandle, members[i].name);
+            if (!sym && members[i].critical)
+            {
+                dlclose(mNdkHandle);
+    			GLOGE("dlsym total:%d", i);
+                goto end;
+            }
+            *(void **)((uint8_t*)&syms + members[i].offset) = sym;
         }
-        *(void **)((uint8_t*)&syms + members[i].offset) = sym;
+
+    	GLOGE("jump for i:%d", i);
+
+        i_init_state = 1;
     }
-	GLOGE("jump for i:%d", i);
-    i_init_state = 1;
-end:
-    ret = i_init_state == 1;
-    //if (!ret)
-    //    msg_Err(api->p_obj, "MediaCodec NDK init failed");
+
+	end:
+		ret = i_init_state == 1;
 
     //vlc_mutex_unlock(&lock);
+
     return ret;
 }
 
@@ -459,7 +461,7 @@ static int DequeueOutput(mc_api *api, mtime_t i_timeout)
     ssize_t i_index;
 
     i_index = syms.AMediaCodec.dequeueOutputBuffer(p_sys->p_codec, &p_sys->info, i_timeout);
-    GLOGE("dequeueOutputBuffer size:%d time:%d", p_sys->info.size, p_sys->info.presentationTimeUs);
+    GLOGE("dequeueOutputBuffer size:%d time:%lld", p_sys->info.size, p_sys->info.presentationTimeUs);
     if (i_index >= 0)
         return i_index;
     else if (i_index == AMEDIACODEC_INFO_TRY_AGAIN_LATER)

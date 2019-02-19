@@ -92,6 +92,7 @@ struct symext
     	pf_AMediaExtractor_seekTo seekTo;
     	pf_AMediaFormat_getString getString;
     } AMediaExtractor;
+
     struct {
         pf_AMediaFormat_new newfmt;
         pf_AMediaFormat_delete deletefmt;
@@ -102,6 +103,7 @@ struct symext
         pf_AMediaFormat_getInt32 getInt32;
         pf_AMediaFormat_getString getString;
     } AMediaFormat;
+
     struct {
         pf_AMediaCodec_createCodecByName createCodecByName;
         pf_AMediaCodec_createDecoderByType createDecoderByType;//(const char *mime_type)
@@ -123,6 +125,7 @@ struct symext
     } AMediaCodec;
 
     void *mHandle;
+
 };
 
 

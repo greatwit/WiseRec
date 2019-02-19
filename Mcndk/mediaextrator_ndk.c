@@ -13,6 +13,7 @@
 #include "mediacodec.h"
 #include "mediaextrator.h"
 
+#define  TAG "mediaextrator_ndk"
 #include "ComDefine.h"
 
 
@@ -80,54 +81,58 @@ static struct members members[] =
 bool InitExtratorSymbols(struct symext *symbols)//mc_api *api
 {
     //static vlc_mutex_t lock = VLC_STATIC_MUTEX;
-    static int i_init_state = -1;
+    int i_init_state = -1;
     bool ret;
 
     //vlc_mutex_lock(&lock);
 
-    if (i_init_state != -1) {
-		GLOGE("i_init_state != -1.");
-        goto end;
-	}
+    if(symbols->mHandle==NULL) {
 
-    i_init_state = 0;
-
-    void *ndk_handle = dlopen("libmediandk.so", RTLD_NOW);
-    if (!ndk_handle) {
-		GLOGE("dlopen failed.");
-        goto end;
-	}
-	int i = 0;
-    for (; members[i].name; i++)
-    {
-        void *sym = dlsym(ndk_handle, members[i].name);
-        if (!sym && members[i].critical)
-        {
-            dlclose(ndk_handle);
-			GLOGE("dlextsym total:%d", i);
+        void *ndk_handle = dlopen("libmediandk.so", RTLD_NOW);
+        if (!ndk_handle) {
+    		GLOGE("dlopen failed.");
             goto end;
+    	}
+    	int i = 0;
+        for (; members[i].name; i++)
+        {
+            void *sym = dlsym(ndk_handle, members[i].name);
+            if (!sym && members[i].critical)
+            {
+                dlclose(ndk_handle);
+    			GLOGE("dlextsym total:%d", i);
+                goto end;
+            }
+            *(void **)((uint8_t*)symbols + members[i].offset) = sym;
         }
-        *(void **)((uint8_t*)symbols + members[i].offset) = sym;
-    }
-    symbols->mHandle = ndk_handle;
+        symbols->mHandle = ndk_handle;
 
-	GLOGE("jump for i:%d", i);
-    i_init_state = 1;
+    	GLOGI("jump for i:%d", i);
+        i_init_state = 1;
+    }
+
 end:
     ret = i_init_state == 1;
     if (!ret)
     	GLOGE("MediaExtractor NDK init failed");
+
+    GLOGW("InitExtratorSymbols done.");
 
     //vlc_mutex_unlock(&lock);
     return ret;
 }
 
 bool ReleaseExtratorSymbols(struct symext *symbols) {
-	bool ret = true;
+	bool ret = false;
+
 	if(symbols && (symbols->mHandle)) {
         dlclose(symbols->mHandle);
         symbols->mHandle = NULL;
+        ret = true;
+
+        GLOGW("ReleaseExtratorSymbols done.");
 	}
+
 	return ret;
 }
 

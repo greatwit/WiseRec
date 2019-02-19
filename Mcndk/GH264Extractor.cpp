@@ -13,8 +13,12 @@ GH264Extractor::GH264Extractor()
 	,mHeight(0)
 	,mSurface(NULL)
 {
-	InitExtratorSymbols(&mSymbols);
-	mFormat = mSymbols.AMediaFormat.newfmt();
+	mSymbols.mHandle = NULL;
+
+	if(InitExtratorSymbols(&mSymbols))
+		mFormat = mSymbols.AMediaFormat.newfmt();
+
+	GLOGE("GH264Extractor construct\n");
 }
 
 GH264Extractor::~GH264Extractor()
@@ -30,6 +34,8 @@ GH264Extractor::~GH264Extractor()
 		fclose(mrFile);
 		mrFile = NULL;
 	}
+
+	GLOGE("GH264Extractor ~construct\n");
 }
 
 void* GH264Extractor::Thread() {
